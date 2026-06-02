@@ -3,9 +3,6 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Web\HomeController;
 use App\Http\Controllers\Admin\AdminAuthController;
-use App\Http\Controllers\Admin\PageController;
-use App\Http\Controllers\Admin\ContactController;
-use App\Http\Controllers\Admin\NotificationController;
 use App\Http\Controllers\Admin\AdminUserController;
 
 /*
@@ -65,30 +62,7 @@ Route::name('admin.')->prefix('admin')->group(function () {
             
         });
         
-        Route::name('contacts.')->group(function () {
-            
-            Route::get("contacts", [ContactController::class, 'index'])->name('index');
 
-            Route::get("contacts/all", [ContactController::class, 'getallcontact'])->name('allcontact');
-
-            Route::delete("contacts/delete/{id}", [ContactController::class, 'destroy'])->name('destroy');
-        });
-
-        Route::name('page.')->group(function () {
-            
-            Route::get("page/create/{key}", [PageController::class, 'create'])->name('create');
-            
-            Route::put("page/update/{key}", [PageController::class, 'update'])->name('update');
-        });
-
-        Route::name('notifications.')->group(function () {
-            
-            Route::get("notifications/index", [NotificationController::class, 'index'])->name('index');
-            
-            Route::get("notifications/clear", [NotificationController::class, 'clear'])->name('clear');
-            
-            Route::delete("notifications/delete/{id}", [NotificationController::class, 'destroy'])->name('destroy');
-        });
     });
 
 });

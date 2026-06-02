@@ -8,8 +8,6 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Mail,Hash,File,Auth,DB,Helper,Exception,Session,Redirect,Validator;
 use Carbon\Carbon;
-use App\Models\Notification;
-use App\Models\NotificationUser;
 
 class AdminUserController extends Controller 
 {
