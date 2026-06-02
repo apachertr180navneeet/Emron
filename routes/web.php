@@ -3,7 +3,6 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Web\HomeController;
 use App\Http\Controllers\Admin\AdminAuthController;
-use App\Http\Controllers\Admin\AdminUserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -48,19 +47,6 @@ Route::name('admin.')->prefix('admin')->group(function () {
 
         Route::post('profile', [AdminAuthController::class, 'updateAdminProfile'])->name('update.profile');
 
-        Route::name('users.')->group(function () {
-            
-            Route::get("users", [AdminUserController::class, 'index'])->name('index');
-            
-            Route::get("users/alluser", [AdminUserController::class, 'getallUser'])->name('alluser');
-
-            Route::post("users/status", [AdminUserController::class, 'userStatus'])->name('status');
-
-            Route::delete("users/delete/{id}", [AdminUserController::class, 'destroy'])->name('destroy');
-
-            Route::get("users/{id}", [AdminUserController::class, 'show'])->name('show');
-            
-        });
         
 
     });

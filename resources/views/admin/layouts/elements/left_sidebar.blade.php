@@ -64,13 +64,6 @@
 			</a>
 		</li>
 
-		<li class="menu-item {{ request()->is('admin/users') ? 'active' : ''}}">
-			<a href="{{route('admin.users.index')}}" class="menu-link">
-				<i class="menu-icon tf-icons bx bx-group"></i>
-				<div data-i18n="User">Users</div>
-			</a>
-		</li>
-
 		
 	</ul>
 </aside>
