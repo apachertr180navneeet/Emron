@@ -25,7 +25,7 @@ class UserMiddleware
                 return back()->with("error","Opps! You do not have access this");
             }
         }else{
-            return redirect()->route('login.get');
+            return redirect()->route('company.login');
         }
     }
 }

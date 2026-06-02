@@ -40,11 +40,29 @@
         </div>
         <div class="offcanvas-body p-3">
             <ul class="nav flex-column">
+                @if(Auth::user()->role == 'admin')
                 <li class="nav-item mb-1">
                     <a href="{{route('admin.dashboard')}}" class="nav-link d-flex align-items-center rounded-3 {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}" style="color:#94a3b8;padding:.75rem 1rem;font-size:.875rem">
                         <i class="bi bi-grid-1x2 me-3 fs-5" style="color:#64748b"></i> Dashboard
                     </a>
                 </li>
+                <li class="nav-item mb-1">
+                    <a href="{{route('admin.company.index')}}" class="nav-link d-flex align-items-center rounded-3 {{ request()->routeIs('admin.company.*') ? 'active' : '' }}" style="color:#94a3b8;padding:.75rem 1rem;font-size:.875rem">
+                        <i class="bi bi-building me-3 fs-5" style="color:#64748b"></i> Company Master
+                    </a>
+                </li>
+                @else
+                <li class="nav-item mb-1">
+                    <a href="{{route('company.dashboard')}}" class="nav-link d-flex align-items-center rounded-3 {{ request()->routeIs('company.dashboard') ? 'active' : '' }}" style="color:#94a3b8;padding:.75rem 1rem;font-size:.875rem">
+                        <i class="bi bi-grid-1x2 me-3 fs-5" style="color:#64748b"></i> Dashboard
+                    </a>
+                </li>
+                <li class="nav-item mb-1">
+                    <a href="{{route('admin.vendor.index')}}" class="nav-link d-flex align-items-center rounded-3 {{ request()->routeIs('admin.vendor.*') ? 'active' : '' }}" style="color:#94a3b8;padding:.75rem 1rem;font-size:.875rem">
+                        <i class="bi bi-buildings me-3 fs-5" style="color:#64748b"></i> Vendor Master
+                    </a>
+                </li>
+                @endif
             </ul>
         </div>
         <div class="p-3 border-top border-secondary">

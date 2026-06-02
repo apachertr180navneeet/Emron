@@ -12,7 +12,7 @@
         <h5 class="card-section-title"><i class="bi bi-person"></i> Profile Information</h5>
     </div>
     <div class="p-4">
-        <form action="{{ route('admin.update.profile') }}" method="POST" enctype="multipart/form-data">
+        <form action="{{ route('company.profile.update') }}" method="POST" enctype="multipart/form-data">
             @csrf
             <div class="row g-4">
                 <div class="col-md-6">
@@ -57,7 +57,7 @@
             function previewAvatar(input) {
                 const container = document.getElementById('user-image').parentElement;
                 if (input.files && input.files[0]) {
-                    container.innerHTML = `<img src="${window.URL.createObjectURL(input.files[0])}" class="avatar-preview" id="user-image">`;
+                    container.innerHTML = '<img src="' + window.URL.createObjectURL(input.files[0]) + '" class="avatar-preview" id="user-image">';
                 }
             }
             </script>

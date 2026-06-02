@@ -21,7 +21,8 @@
             </div>
             <div class="col-md-6">
                 <label class="form-label">Confirm New Password</label>
-                <input name="new_password_confirmation" type="password" class="form-control" placeholder="Confirm new password" required>
+                <input name="new_password_confirmation" type="password" class="form-control @error('new_password') is-invalid @enderror" placeholder="Confirm new password" required>
+                @error('new_password')<div class="invalid-feedback">{{ $message }}</div>@enderror
             </div>
             <div class="col-12 pt-3">
                 <button type="submit" class="btn btn-primary px-4">Update Password</button>

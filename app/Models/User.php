@@ -12,6 +12,34 @@ class User extends Authenticatable
 {
     use HasFactory, Notifiable, SoftDeletes;
 
+    protected $fillable = [
+        'company_id',
+        'first_name',
+        'last_name',
+        'full_name',
+        'username',
+        'slug',
+        'email',
+        'phone',
+        'password',
+        'role',
+        'address',
+        'area',
+        'city',
+        'state',
+        'country',
+        'country_code',
+        'zipcode',
+        'latitude',
+        'longitude',
+        'timezone',
+        'avatar',
+        'bio',
+        'device_token',
+        'device_type',
+        'status',
+    ];
+
     protected $appends = ['avatar_full_path'];
 
     protected $hidden = [
