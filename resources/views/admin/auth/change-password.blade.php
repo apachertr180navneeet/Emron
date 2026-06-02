@@ -10,18 +10,18 @@
             @csrf
             <div class="col-md-6">
                 <label class="form-label">Old Password</label>
-                <input name="old_password" type="password" class="form-control @error('old_password') is-invalid @enderror" placeholder="Enter old password" required>
+                <input name="old_password" type="password" class="form-control @error('old_password') is-invalid @enderror" placeholder="Enter old password">
                 @error('old_password')<div class="invalid-feedback">{{ $message }}</div>@enderror
             </div>
             <div class="col-md-6"></div>
             <div class="col-md-6">
                 <label class="form-label">New Password</label>
-                <input name="new_password" type="password" class="form-control @error('new_password') is-invalid @enderror" placeholder="Enter new password" required>
+                <input name="new_password" type="password" class="form-control @error('new_password') is-invalid @enderror" placeholder="Enter new password">
                 @error('new_password')<div class="invalid-feedback">{{ $message }}</div>@enderror
             </div>
             <div class="col-md-6">
                 <label class="form-label">Confirm New Password</label>
-                <input name="new_password_confirmation" type="password" class="form-control @error('new_password') is-invalid @enderror" placeholder="Confirm new password" required>
+                <input name="new_password_confirmation" type="password" class="form-control @error('new_password') is-invalid @enderror" placeholder="Confirm new password">
                 @error('new_password')<div class="invalid-feedback">{{ $message }}</div>@enderror
             </div>
             <div class="col-12 pt-3">

@@ -11,18 +11,18 @@
             <div class="row g-4">
                 <div class="col-md-6">
                     <label class="form-label">Current Password *</label>
-                    <input type="password" name="old_password" class="form-control @error('old_password') is-invalid @enderror" placeholder="Enter current password" required>
+                    <input type="password" name="old_password" class="form-control @error('old_password') is-invalid @enderror" placeholder="Enter current password">
                     @error('old_password')<div class="invalid-feedback">{{ $message }}</div>@enderror
                 </div>
                 <div class="col-md-6"></div>
                 <div class="col-md-6">
                     <label class="form-label">New Password *</label>
-                    <input type="password" name="new_password" class="form-control @error('new_password') is-invalid @enderror" placeholder="Enter new password" required>
+                    <input type="password" name="new_password" class="form-control @error('new_password') is-invalid @enderror" placeholder="Enter new password">
                     @error('new_password')<div class="invalid-feedback">{{ $message }}</div>@enderror
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">Confirm New Password *</label>
-                    <input type="password" name="new_password_confirmation" class="form-control @error('new_password') is-invalid @enderror" placeholder="Confirm new password" required>
+                    <input type="password" name="new_password_confirmation" class="form-control @error('new_password') is-invalid @enderror" placeholder="Confirm new password">
                     @error('new_password')<div class="invalid-feedback">{{ $message }}</div>@enderror
                 </div>
             </div>

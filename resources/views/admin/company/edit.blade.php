@@ -15,22 +15,22 @@
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="form-label">Company Name <span class="text-danger">*</span></label>
-                        <input type="text" name="company_name" class="form-control @error('company_name') is-invalid @enderror" placeholder="Enter company name" value="{{ old('company_name', $company->company_name) }}" required>
+                        <input type="text" name="company_name" class="form-control @error('company_name') is-invalid @enderror" placeholder="Enter company name" value="{{ old('company_name', $company->company_name) }}">
                         @error('company_name')<div class="invalid-feedback">{{ $message }}</div>@enderror
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Owner Name <span class="text-danger">*</span></label>
-                        <input type="text" name="owner_name" class="form-control @error('owner_name') is-invalid @enderror" placeholder="Enter owner name" value="{{ old('owner_name', $company->owner_name) }}" required>
+                        <input type="text" name="owner_name" class="form-control @error('owner_name') is-invalid @enderror" placeholder="Enter owner name" value="{{ old('owner_name', $company->owner_name) }}">
                         @error('owner_name')<div class="invalid-feedback">{{ $message }}</div>@enderror
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Mobile Number <span class="text-danger">*</span></label>
-                        <input type="text" name="mobile" class="form-control @error('mobile') is-invalid @enderror" placeholder="Enter mobile number" value="{{ old('mobile', $company->mobile) }}" required>
+                        <input type="text" name="mobile" class="form-control @error('mobile') is-invalid @enderror" placeholder="Enter mobile number" value="{{ old('mobile', $company->mobile) }}">
                         @error('mobile')<div class="invalid-feedback">{{ $message }}</div>@enderror
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Email <span class="text-danger">*</span></label>
-                        <input type="email" name="email" class="form-control @error('email') is-invalid @enderror" placeholder="Enter email address" value="{{ old('email', $company->email) }}" required>
+                        <input type="email" name="email" class="form-control @error('email') is-invalid @enderror" placeholder="Enter email address" value="{{ old('email', $company->email) }}">
                         @error('email')<div class="invalid-feedback">{{ $message }}</div>@enderror
                     </div>
                     <div class="mb-3">
@@ -47,7 +47,7 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label">City <span class="text-danger">*</span></label>
-                        <input type="text" name="city" class="form-control @error('city') is-invalid @enderror" placeholder="Enter city" value="{{ old('city', $company->city) }}" required>
+                        <input type="text" name="city" class="form-control @error('city') is-invalid @enderror" placeholder="Enter city" value="{{ old('city', $company->city) }}">
                         @error('city')<div class="invalid-feedback">{{ $message }}</div>@enderror
                     </div>
                     <div class="mb-3">

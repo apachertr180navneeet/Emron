@@ -1,11 +1,11 @@
 @extends('admin.layouts.app')
 @section('page_title', 'My Profile')
-@push('style')
+@section('style')
 <style>
     .avatar-preview { width:100px; height:100px; object-fit:cover; border-radius:50%; border:2px solid #e2e8f0; }
     .avatar-preview-initials { width:100px; height:100px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:2rem; font-weight:700; color:#4f46e5; background:rgba(99,102,241,.1); border:2px solid #e2e8f0; }
 </style>
-@endpush
+@endsection
 @section('content')
 <div class="data-card">
     <div class="table-header">
@@ -17,22 +17,22 @@
             <div class="row g-4">
                 <div class="col-md-6">
                     <label class="form-label">First Name *</label>
-                    <input type="text" name="first_name" class="form-control @error('first_name') is-invalid @enderror" placeholder="First name" value="{{old('first_name', $user->first_name)}}" required>
+                    <input type="text" name="first_name" class="form-control @error('first_name') is-invalid @enderror" placeholder="First name" value="{{old('first_name', $user->first_name)}}">
                     @error('first_name')<div class="invalid-feedback">{{ $message }}</div>@enderror
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">Last Name *</label>
-                    <input type="text" name="last_name" class="form-control @error('last_name') is-invalid @enderror" placeholder="Last name" value="{{old('last_name', $user->last_name)}}" required>
+                    <input type="text" name="last_name" class="form-control @error('last_name') is-invalid @enderror" placeholder="Last name" value="{{old('last_name', $user->last_name)}}">
                     @error('last_name')<div class="invalid-feedback">{{ $message }}</div>@enderror
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">Phone Number *</label>
-                    <input type="tel" name="phone" class="form-control @error('phone') is-invalid @enderror" placeholder="Phone number" value="{{old('phone', $user->phone)}}" required>
+                    <input type="tel" name="phone" class="form-control @error('phone') is-invalid @enderror" placeholder="Phone number" value="{{old('phone', $user->phone)}}">
                     @error('phone')<div class="invalid-feedback">{{ $message }}</div>@enderror
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">Email Address *</label>
-                    <input type="email" name="email" class="form-control @error('email') is-invalid @enderror" placeholder="Email address" value="{{old('email', $user->email)}}" required>
+                    <input type="email" name="email" class="form-control @error('email') is-invalid @enderror" placeholder="Email address" value="{{old('email', $user->email)}}">
                     @error('email')<div class="invalid-feedback">{{ $message }}</div>@enderror
                 </div>
                 <div class="col-md-6">
@@ -52,20 +52,20 @@
                     </div>
                 </div>
             </div>
-            @push('script')
-            <script>
-            function previewAvatar(input) {
-                const container = document.getElementById('user-image').parentElement;
-                if (input.files && input.files[0]) {
-                    container.innerHTML = `<img src="${window.URL.createObjectURL(input.files[0])}" class="avatar-preview" id="user-image">`;
-                }
-            }
-            </script>
-            @endpush
             <div class="pt-4 border-top mt-4">
                 <button type="submit" class="btn btn-primary px-4">Save Changes</button>
             </div>
         </form>
     </div>
 </div>
+@endsection
+@section('script')
+<script>
+function previewAvatar(input) {
+    const container = document.getElementById('user-image').parentElement;
+    if (input.files && input.files[0]) {
+        container.innerHTML = `<img src="${window.URL.createObjectURL(input.files[0])}" class="avatar-preview" id="user-image">`;
+    }
+}
+</script>
 @endsection

@@ -12,7 +12,7 @@
             <span class="position-absolute top-50 start-0 translate-middle-y ps-3 text-secondary">
                 <i class="bi bi-person"></i>
             </span>
-            <input type="text" class="form-control ps-5 @error('username') is-invalid @enderror" id="username" name="username" placeholder="Enter your username" value="{{ old('username') }}" required autofocus>
+            <input type="text" class="form-control ps-5 @error('username') is-invalid @enderror" id="username" name="username" placeholder="Enter your username" value="{{ old('username') }}" autofocus>
             @error('username')<div class="invalid-feedback">{{ $message }}</div>@enderror
         </div>
     </div>
@@ -22,7 +22,7 @@
             <span class="position-absolute top-50 start-0 translate-middle-y ps-3 text-secondary">
                 <i class="bi bi-lock"></i>
             </span>
-            <input type="password" class="form-control ps-5 @error('password') is-invalid @enderror" id="password" name="password" placeholder="Enter your password" required>
+            <input type="password" class="form-control ps-5 @error('password') is-invalid @enderror" id="password" name="password" placeholder="Enter your password">
             @error('password')<div class="invalid-feedback">{{ $message }}</div>@enderror
         </div>
     </div>

@@ -58,9 +58,10 @@ class CompanyController extends Controller
                 'owner_name'   => 'required',
                 'mobile'       => 'required|digits:10|unique:companies,mobile|unique:users,phone',
                 'email'        => 'required|email|unique:companies,email|unique:users,email',
+                'username'     => 'required|unique:users,username',
                 'city'         => 'required',
                 'logo'         => 'nullable|image|mimes:jpeg,jpg,png|max:2048',
-                'password'     => 'nullable|min:6',
+                'password'     => 'required|min:6',
             ]);
 
             if ($validator->fails()) {
@@ -123,6 +124,7 @@ class CompanyController extends Controller
                 'owner_name'   => 'required',
                 'mobile'       => 'required|digits:10|unique:companies,mobile,' . $company->id . '|unique:users,phone,' . User::where('email', $company->email)->value('id'),
                 'email'        => 'required|email|unique:companies,email,' . $company->id . '|unique:users,email,' . User::where('email', $company->email)->value('id'),
+                'username'     => 'required|unique:users,username,' . User::where('email', $company->email)->value('id'),
                 'city'         => 'required',
                 'logo'         => 'nullable|image|mimes:jpeg,jpg,png|max:2048',
                 'password'     => 'nullable|min:6',

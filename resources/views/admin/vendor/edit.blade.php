@@ -15,12 +15,12 @@
             <div class="row g-4 mb-4">
                 <div class="col-md-6">
                     <label class="form-label">Vendor Name <span class="text-danger">*</span></label>
-                    <input type="text" name="vendor_name" class="form-control @error('vendor_name') is-invalid @enderror" placeholder="Enter vendor contact name" value="{{ old('vendor_name', $vendor->vendor_name) }}" required>
+                    <input type="text" name="vendor_name" class="form-control @error('vendor_name') is-invalid @enderror" placeholder="Enter vendor contact name" value="{{ old('vendor_name', $vendor->vendor_name) }}">
                     @error('vendor_name')<div class="invalid-feedback">{{ $message }}</div>@enderror
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">Firm Name <span class="text-danger">*</span></label>
-                    <input type="text" name="firm_name" class="form-control @error('firm_name') is-invalid @enderror" placeholder="Enter business / firm name" value="{{ old('firm_name', $vendor->firm_name) }}" required>
+                    <input type="text" name="firm_name" class="form-control @error('firm_name') is-invalid @enderror" placeholder="Enter business / firm name" value="{{ old('firm_name', $vendor->firm_name) }}">
                     @error('firm_name')<div class="invalid-feedback">{{ $message }}</div>@enderror
                 </div>
             </div>
@@ -29,12 +29,12 @@
             <div class="row g-4 mb-4">
                 <div class="col-md-4">
                     <label class="form-label">Phone Number <span class="text-danger">*</span></label>
-                    <input type="text" name="mobile" class="form-control @error('mobile') is-invalid @enderror" placeholder="Enter contact number" value="{{ old('mobile', $vendor->mobile) }}" required maxlength="10">
+                    <input type="text" name="mobile" class="form-control @error('mobile') is-invalid @enderror" placeholder="Enter contact number" value="{{ old('mobile', $vendor->mobile) }}" maxlength="10">
                     @error('mobile')<div class="invalid-feedback">{{ $message }}</div>@enderror
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">Email Address <span class="text-danger">*</span></label>
-                    <input type="email" name="email" class="form-control @error('email') is-invalid @enderror" placeholder="Enter email address" value="{{ old('email', $vendor->email) }}" required>
+                    <input type="email" name="email" class="form-control @error('email') is-invalid @enderror" placeholder="Enter email address" value="{{ old('email', $vendor->email) }}">
                     @error('email')<div class="invalid-feedback">{{ $message }}</div>@enderror
                 </div>
             </div>
@@ -43,7 +43,7 @@
             <div class="row g-4">
                 <div class="col-md-6">
                     <label class="form-label">Office Address <span class="text-danger">*</span></label>
-                    <textarea name="address" class="form-control @error('address') is-invalid @enderror" rows="2" placeholder="Enter street address, building, suite..." required>{{ old('address', $vendor->address) }}</textarea>
+                    <textarea name="address" class="form-control @error('address') is-invalid @enderror" rows="2" placeholder="Enter street address, building, suite...">{{ old('address', $vendor->address) }}</textarea>
                     @error('address')<div class="invalid-feedback">{{ $message }}</div>@enderror
                 </div>
                 <div class="col-md-3">
@@ -53,17 +53,17 @@
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">City <span class="text-danger">*</span></label>
-                    <input type="text" name="city" class="form-control @error('city') is-invalid @enderror" placeholder="Enter city" value="{{ old('city', $vendor->city) }}" required>
+                    <input type="text" name="city" class="form-control @error('city') is-invalid @enderror" placeholder="Enter city" value="{{ old('city', $vendor->city) }}">
                     @error('city')<div class="invalid-feedback">{{ $message }}</div>@enderror
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">Pin Code <span class="text-danger">*</span></label>
-                    <input type="text" name="pin_code" class="form-control @error('pin_code') is-invalid @enderror" placeholder="Enter pin code" value="{{ old('pin_code', $vendor->pin_code) }}" required>
+                    <input type="text" name="pin_code" class="form-control @error('pin_code') is-invalid @enderror" placeholder="Enter pin code" value="{{ old('pin_code', $vendor->pin_code) }}">
                     @error('pin_code')<div class="invalid-feedback">{{ $message }}</div>@enderror
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">State <span class="text-danger">*</span></label>
-                    <input type="text" name="state" class="form-control @error('state') is-invalid @enderror" placeholder="Enter state" value="{{ old('state', $vendor->state) }}" required>
+                    <input type="text" name="state" class="form-control @error('state') is-invalid @enderror" placeholder="Enter state" value="{{ old('state', $vendor->state) }}">
                     @error('state')<div class="invalid-feedback">{{ $message }}</div>@enderror
                 </div>
             </div>
