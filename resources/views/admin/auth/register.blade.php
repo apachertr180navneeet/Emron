@@ -1,129 +1,47 @@
-@extends('admin.layouts.login_layout') 
-
-@section('content') 
-
-<section class="breadcrumb-area bread-bg-9">
-    <div class="breadcrumb-wrap">
-        <div class="container">
-            <div class="row align-items-center">
-                <div class="col-lg-6">
-                    <div class="breadcrumb-content">
-                        <div class="section-heading">
-                            <h2 class="sec__title text-white"></h2>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-6">
-                    <div class="breadcrumb-list gs-text-bread">
-                        <ul class="list-items">
-                            <li><a href="/">Home</a></li>
-                            <li></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
+@extends('admin.layouts.login_layout')
+@section('content')
+<div class="text-center mb-4">
+    <h3 class="fw-bold text-dark">Create Account</h3>
+    <p class="text-muted" style="font-size:.875rem">Register a new admin account for the ERP suite.</p>
+</div>
+<form method="POST" action="{{ route('admin.register') }}">
+    @csrf
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label class="form-label">First Name</label>
+            <input class="form-control @error('first_name') is-invalid @enderror" name="first_name" value="{{ old('first_name') }}" required type="text" placeholder="First name">
+            @error('first_name')<div class="invalid-feedback">{{ $message }}</div>@enderror
+        </div>
+        <div class="col-md-6 mb-3">
+            <label class="form-label">Last Name</label>
+            <input class="form-control @error('last_name') is-invalid @enderror" name="last_name" value="{{ old('last_name') }}" required type="text" placeholder="Last name">
+            @error('last_name')<div class="invalid-feedback">{{ $message }}</div>@enderror
         </div>
     </div>
-    
-</section>
-
-<section class="contact-area section--padding">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-3">
-              
-            </div>
-            <div class="col-lg-6">
-                <div class="form-box">
-                    <div class="form-title-wrap">
-                        <h3 class="title">Register</h3>
-                        <p class="font-size-15 mb-0">Hello! Welcome Create a New Account</p>
-                    </div>
-                    <div class="form-content ">
-                        <div class="contact-form-action">
-                           <form method="POST" action="{{ route('admin.register') }}">
-                              @csrf
-                              <div class="input-box">
-                                 <label class="label-text">Store Name</label>
-                                 <div class="form-group">
-                                    <span class="la la-store form-icon"></span>
-                                    <input class="form-control{{ $errors->has('store_name') ? ' is-invalid' : '' }}" name="store_name" value="{{ old('store_name') }}" required autofocus type="text" placeholder="Type your store name">
-                                    @if ($errors->has('store_name'))
-                                       <span class="invalid-feedback">
-                                          <strong>{{ $errors->first('store_name') }}</strong>
-                                       </span>
-                                    @endif
-                                 </div>
-                              </div>
-                               <div class="input-box">
-                                  <label class="label-text">Username</label>
-                                  <div class="form-group">
-                                     <span class="la la-user form-icon"></span>
-                                     <input class="form-control{{ $errors->has('username') ? ' is-invalid' : '' }}" name="username" value="{{ old('username') }}" required type="text" placeholder="Type your username">
-                                    @if ($errors->has('username'))
-                                       <span class="invalid-feedback">
-                                          <strong>{{ $errors->first('username') }}</strong>
-                                       </span>
-                                    @endif
-                                  </div>
-                               </div>
-                              
-                               <div class="input-box">
-                                  <label class="label-text">Email Address</label>
-                                  <div class="form-group">
-                                     <span class="la la-envelope form-icon"></span>
-                                     <input class="form-control{{ $errors->has('email') ? ' is-invalid' : '' }}" name="email" value="{{ old('email') }}" required type="email" placeholder="Type your email">
-                                    @if ($errors->has('email'))
-                                       <span class="invalid-feedback">
-                                          <strong>{{ $errors->first('email') }}</strong>
-                                       </span>
-                                    @endif
-                                  </div>
-                               </div>
-                               
-                               <div class="input-box">
-                                  <label class="label-text">Password</label>
-                                  <div class="form-group">
-                                     <span class="la la-lock form-icon"></span>
-                                     <input class="form-control{{ $errors->has('password') ? ' is-invalid' : '' }}" name="password" value="{{ old('password') }}" required type="password" placeholder="Type password">
-                                    @if ($errors->has('password'))
-                                       <span class="invalid-feedback">
-                                          <strong>{{ $errors->first('password') }}</strong>
-                                       </span>
-                                    @endif
-                                  </div>
-                               </div>
-                   
-                               <div class="input-box">
-                                  <label class="label-text">Repeat Password</label>
-                                  <div class="form-group">
-                                     <span class="la la-lock form-icon"></span>
-                                     <input class="form-control{{ $errors->has('password_confirmation') ? ' is-invalid' : '' }}" name="password_confirmation" value="{{ old('password_confirmation') }}" required type="password" placeholder="Type again password">
-                                    @if ($errors->has('password_confirmation'))
-                                       <span class="invalid-feedback">
-                                          <strong>{{ $errors->first('password_confirmation') }}</strong>
-                                       </span>
-                                    @endif
-                                  </div>
-                               </div>
-                  
-                               <div class="mt-4 mb-4">
-                                 <button type="submit" class="theme-btn w-100">Register</button>
-                               </div>
-                               <div class="action-box text-center">
-                                  <p class="font-size-14"><a href="Login.html">Already Registered User? Click here to login</a></p>
-                                 
-                               </div>
-                            </form>
-                         </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3">
-              
-            </div>
+    <div class="mb-3">
+        <label class="form-label">Username</label>
+        <input class="form-control @error('username') is-invalid @enderror" name="username" value="{{ old('username') }}" required type="text" placeholder="Username">
+        @error('username')<div class="invalid-feedback">{{ $message }}</div>@enderror
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Email Address</label>
+        <input class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required type="email" placeholder="Email address">
+        @error('email')<div class="invalid-feedback">{{ $message }}</div>@enderror
+    </div>
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label class="form-label">Password</label>
+            <input class="form-control @error('password') is-invalid @enderror" name="password" required type="password" placeholder="Password">
+            @error('password')<div class="invalid-feedback">{{ $message }}</div>@enderror
+        </div>
+        <div class="col-md-6 mb-3">
+            <label class="form-label">Confirm Password</label>
+            <input class="form-control" name="password_confirmation" required type="password" placeholder="Confirm password">
         </div>
     </div>
-</section>
-
+    <button type="submit" class="btn btn-primary w-100 py-2.5 fw-bold" style="background:linear-gradient(135deg,#4f46e5,#7c3aed);border:none;box-shadow:0 4px 16px rgba(79,70,229,.3)">Register</button>
+</form>
+<p class="text-center mt-3 mb-0" style="font-size:.875rem">
+    <a href="{{route('admin.login')}}" class="text-decoration-none fw-semibold">Already have an account? Sign in</a>
+</p>
 @endsection
