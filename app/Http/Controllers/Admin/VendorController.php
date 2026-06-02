@@ -56,18 +56,18 @@ class VendorController extends Controller
 
     public function store(Request $request)
     {
-        try {
-            $request->validate([
-                'vendor_name' => 'required',
-                'firm_name'   => 'required',
-                'mobile'      => 'required|digits:10|unique:vendors,mobile',
-                'email'       => 'required|email|unique:vendors,email',
-                'address'     => 'required',
-                'city'        => 'required',
-                'pin_code'    => 'required',
-                'state'       => 'required',
-            ]);
+        $request->validate([
+            'vendor_name' => 'required',
+            'firm_name'   => 'required',
+            'mobile'      => 'required|digits:10|unique:vendors,mobile',
+            'email'       => 'required|email|unique:vendors,email',
+            'address'     => 'required',
+            'city'        => 'required',
+            'pin_code'    => 'required',
+            'state'       => 'required',
+        ]);
 
+        try {
             $data = $request->all();
             $data['company_id'] = $this->getCompanyId();
             $data['created_by'] = Auth::id();
@@ -90,18 +90,18 @@ class VendorController extends Controller
     public function update(Request $request, Vendor $vendor)
     {
         $this->authorizeAccess($vendor);
-        try {
-            $request->validate([
-                'vendor_name' => 'required',
-                'firm_name'   => 'required',
-                'mobile'      => 'required|digits:10|unique:vendors,mobile,' . $vendor->id,
-                'email'       => 'required|email|unique:vendors,email,' . $vendor->id,
-                'address'     => 'required',
-                'city'        => 'required',
-                'pin_code'    => 'required',
-                'state'       => 'required',
-            ]);
+        $request->validate([
+            'vendor_name' => 'required',
+            'firm_name'   => 'required',
+            'mobile'      => 'required|digits:10|unique:vendors,mobile,' . $vendor->id,
+            'email'       => 'required|email|unique:vendors,email,' . $vendor->id,
+            'address'     => 'required',
+            'city'        => 'required',
+            'pin_code'    => 'required',
+            'state'       => 'required',
+        ]);
 
+        try {
             $data = $request->all();
             $vendor->update($data);
 
