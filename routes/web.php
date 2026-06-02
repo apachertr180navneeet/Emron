@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\SalesmanController;
 use App\Http\Controllers\Admin\ItemController;
 use App\Http\Controllers\Admin\UnitController;
 use App\Http\Controllers\Admin\ItemAssignmentController;
+use App\Http\Controllers\Admin\PurchaseController;
 
 /*
 |--------------------------------------------------------------------------
@@ -98,6 +99,13 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::delete('item-assignment/{itemAssignment}', [ItemAssignmentController::class, 'destroy'])->name('item-assignment.destroy');
     Route::post('item-assignment/save-all', [ItemAssignmentController::class, 'saveAll'])->name('item-assignment.save-all');
     Route::get('item-assignment/matrix-data/{company?}', [ItemAssignmentController::class, 'getMatrixData'])->name('item-assignment.matrix');
+    Route::get('purchase', [PurchaseController::class, 'index'])->name('purchase.index');
+    Route::get('purchase/create', [PurchaseController::class, 'create'])->name('purchase.create');
+    Route::post('purchase', [PurchaseController::class, 'store'])->name('purchase.store');
+    Route::get('purchase/{purchase}/edit', [PurchaseController::class, 'edit'])->name('purchase.edit');
+    Route::any('purchase/{purchase}/update', [PurchaseController::class, 'update'])->name('purchase.update');
+    Route::post('purchase/{purchase}/toggle-status', [PurchaseController::class, 'toggleStatus'])->name('purchase.toggle');
+    Route::delete('purchase/{purchase}', [PurchaseController::class, 'destroy'])->name('purchase.destroy');
 });
 
 Route::name('company.')->group(function () {
