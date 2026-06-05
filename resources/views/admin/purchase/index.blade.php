@@ -43,7 +43,7 @@ function confirmDelete(id) {
         if (result.isConfirmed) {
             var form = document.createElement('form');
             form.method = 'POST';
-            form.action = '/admin/purchase/' + id;
+            form.action = BASE_URL + '/admin/purchase/' + id;
             form.style.display = 'none';
             var csrf = document.createElement('input');
             csrf.name = '_token';

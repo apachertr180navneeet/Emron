@@ -40,7 +40,7 @@ function postForm(url, data, onSuccess) {
 }
 
 function toggleStatus(el, id) {
-    postForm('/admin/salesman/' + id + '/toggle-status', { _token: csrfToken }, function(res) {
+    postForm(BASE_URL + '/admin/salesman/' + id + '/toggle-status', { _token: csrfToken }, function(res) {
         if (res.success) {
             el.className = 'status-badge ' + res.status;
             el.textContent = res.status.charAt(0).toUpperCase() + res.status.slice(1);
@@ -62,7 +62,7 @@ function confirmDelete(id) {
         if (result.isConfirmed) {
             var form = document.createElement('form');
             form.method = 'POST';
-            form.action = '/admin/salesman/' + id;
+            form.action = BASE_URL + '/admin/salesman/' + id;
             form.style.display = 'none';
             var csrf = document.createElement('input');
             csrf.name = '_token';

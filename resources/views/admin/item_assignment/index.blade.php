@@ -139,7 +139,7 @@ function escHtml(str) {
 
 function loadMatrix(companyId) {
     currentCompanyId = companyId;
-    const url = '/admin/item-assignment/matrix-data/' + companyId;
+    const url = BASE_URL + '/admin/item-assignment/matrix-data/' + companyId;
     fetch(url, {
         headers: { 'X-CSRF-TOKEN': getCsrfToken(), 'Accept': 'application/json' }
     })
@@ -201,7 +201,7 @@ function saveAllAssignments() {
         assignments: pendingAssignments
     };
 
-    fetch('/admin/item-assignment/save-all', {
+    fetch(BASE_URL + '/admin/item-assignment/save-all', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

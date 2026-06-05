@@ -42,7 +42,7 @@ function postForm(url, data, onSuccess) {
 }
 
 function toggleStatus(el, id) {
-    postForm('/admin/company/' + id + '/toggle-status', { _token: csrfToken }, function(res) {
+    postForm(BASE_URL + '/admin/company/' + id + '/toggle-status', { _token: csrfToken }, function(res) {
         if (res.success) {
             el.className = 'status-badge ' + res.status;
             el.textContent = res.status.charAt(0).toUpperCase() + res.status.slice(1);

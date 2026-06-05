@@ -21,36 +21,6 @@
                     <i class="bi bi-building"></i> Company Master
                 </a>
             </li>
-            <li class="nav-item">
-                <a href="{{route('admin.customer.index')}}" class="nav-link {{ request()->routeIs('admin.customer.*') ? 'active' : '' }}">
-                    <i class="bi bi-people"></i> Customer Master
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="{{route('admin.salesman.index')}}" class="nav-link {{ request()->routeIs('admin.salesman.*') ? 'active' : '' }}">
-                    <i class="bi bi-person-badge"></i> Salesman Master
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="{{route('admin.unit.index')}}" class="nav-link {{ request()->routeIs('admin.unit.*') ? 'active' : '' }}">
-                    <i class="bi bi-rulers"></i> Unit Master
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="{{route('admin.item.index')}}" class="nav-link {{ request()->routeIs('admin.item.*') ? 'active' : '' }}">
-                    <i class="bi bi-box-seam"></i> Item Master
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="{{route('admin.item-assignment.index')}}" class="nav-link {{ request()->routeIs('admin.item-assignment.*') ? 'active' : '' }}">
-                    <i class="bi bi-link-45deg"></i> Item Assignment
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="{{route('admin.purchase.index')}}" class="nav-link {{ request()->routeIs('admin.purchase.*') ? 'active' : '' }}">
-                    <i class="bi bi-cart3"></i> Purchase
-                </a>
-            </li>
             @else
             <li class="nav-item">
                 <a href="{{route('company.dashboard')}}" class="nav-link {{ request()->routeIs('company.dashboard') ? 'active' : '' }}">

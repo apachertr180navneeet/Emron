@@ -51,36 +51,6 @@
                         <i class="bi bi-building me-3 fs-5" style="color:#64748b"></i> Company Master
                     </a>
                 </li>
-                <li class="nav-item mb-1">
-                    <a href="{{route('admin.customer.index')}}" class="nav-link d-flex align-items-center rounded-3 {{ request()->routeIs('admin.customer.*') ? 'active' : '' }}" style="color:#94a3b8;padding:.75rem 1rem;font-size:.875rem">
-                        <i class="bi bi-people me-3 fs-5" style="color:#64748b"></i> Customer Master
-                    </a>
-                </li>
-                <li class="nav-item mb-1">
-                    <a href="{{route('admin.salesman.index')}}" class="nav-link d-flex align-items-center rounded-3 {{ request()->routeIs('admin.salesman.*') ? 'active' : '' }}" style="color:#94a3b8;padding:.75rem 1rem;font-size:.875rem">
-                        <i class="bi bi-person-badge me-3 fs-5" style="color:#64748b"></i> Salesman Master
-                    </a>
-                </li>
-                <li class="nav-item mb-1">
-                    <a href="{{route('admin.unit.index')}}" class="nav-link d-flex align-items-center rounded-3 {{ request()->routeIs('admin.unit.*') ? 'active' : '' }}" style="color:#94a3b8;padding:.75rem 1rem;font-size:.875rem">
-                        <i class="bi bi-rulers me-3 fs-5" style="color:#64748b"></i> Unit Master
-                    </a>
-                </li>
-                <li class="nav-item mb-1">
-                    <a href="{{route('admin.item.index')}}" class="nav-link d-flex align-items-center rounded-3 {{ request()->routeIs('admin.item.*') ? 'active' : '' }}" style="color:#94a3b8;padding:.75rem 1rem;font-size:.875rem">
-                        <i class="bi bi-box-seam me-3 fs-5" style="color:#64748b"></i> Item Master
-                    </a>
-                </li>
-                <li class="nav-item mb-1">
-                    <a href="{{route('admin.item-assignment.index')}}" class="nav-link d-flex align-items-center rounded-3 {{ request()->routeIs('admin.item-assignment.*') ? 'active' : '' }}" style="color:#94a3b8;padding:.75rem 1rem;font-size:.875rem">
-                        <i class="bi bi-link-45deg me-3 fs-5" style="color:#64748b"></i> Item Assignment
-                    </a>
-                </li>
-                <li class="nav-item mb-1">
-                    <a href="{{route('admin.purchase.index')}}" class="nav-link d-flex align-items-center rounded-3 {{ request()->routeIs('admin.purchase.*') ? 'active' : '' }}" style="color:#94a3b8;padding:.75rem 1rem;font-size:.875rem">
-                        <i class="bi bi-cart3 me-3 fs-5" style="color:#64748b"></i> Purchase
-                    </a>
-                </li>
                 @else
                 <li class="nav-item mb-1">
                     <a href="{{route('company.dashboard')}}" class="nav-link d-flex align-items-center rounded-3 {{ request()->routeIs('company.dashboard') ? 'active' : '' }}" style="color:#94a3b8;padding:.75rem 1rem;font-size:.875rem">
@@ -138,6 +108,7 @@
         </div>
     </div>
 
+    <script>const BASE_URL = '{{ url('/') }}';</script>
     @include('admin.layouts.elements.sweet_alerts')
     @yield('script')
 </body>
