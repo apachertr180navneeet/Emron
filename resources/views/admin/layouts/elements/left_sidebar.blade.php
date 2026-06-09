@@ -53,6 +53,11 @@
                 </a>
             </li>
             <li class="nav-item">
+                <a href="{{route('admin.expense.index')}}" class="nav-link {{ request()->routeIs('admin.expense.*') ? 'active' : '' }}">
+                    <i class="bi bi-cash-coin"></i> Expense Master
+                </a>
+            </li>
+            <li class="nav-item">
                 <a href="{{route('admin.item-assignment.index')}}" class="nav-link {{ request()->routeIs('admin.item-assignment.*') ? 'active' : '' }}">
                     <i class="bi bi-link-45deg"></i> Item Assignment
                 </a>

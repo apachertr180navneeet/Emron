@@ -6,6 +6,7 @@
             <th class="px-4 py-3">Item Name</th>
             <th class="px-4 py-3">Item Type</th>
             <th class="px-4 py-3">Measure In</th>
+            <th class="px-4 py-3">Size</th>
             <th class="px-4 py-3 text-center" style="width:100px">Status</th>
             <th class="px-4 py-3 text-center" style="width:80px">Action</th>
         </tr>
@@ -20,6 +21,7 @@
             <td class="px-4 text-secondary">{{ $item->item_name }}</td>
             <td class="px-4 text-secondary">{{ $item->item_type }}</td>
             <td class="px-4 text-secondary">{{ $item->unit->unit_name ?? '' }}</td>
+            <td class="px-4 text-secondary">{{ $item->size }}</td>
             <td class="px-4 text-center">
                 <span class="status-badge {{ $item->status }}" onclick="toggleStatus(this, {{ $item->id }})">{{ ucfirst($item->status) }}</span>
             </td>
@@ -36,7 +38,7 @@
         </tr>
         @empty
         <tr>
-            <td colspan="7" class="px-4 py-5 text-center text-secondary">No items found.</td>
+            <td colspan="8" class="px-4 py-5 text-center text-secondary">No items found.</td>
         </tr>
         @endforelse
     </tbody>

@@ -6,17 +6,14 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Auth;
 
-class Item extends Model
+class Expense extends Model
 {
     use SoftDeletes;
 
     protected $fillable = [
         'company_id',
-        'short_code',
-        'item_name',
-        'item_type',
-        'unit_id',
-        'size',
+        'expense_name',
+        'description',
         'status',
         'created_by',
     ];
@@ -24,11 +21,6 @@ class Item extends Model
     public function company()
     {
         return $this->belongsTo(Company::class);
-    }
-
-    public function unit()
-    {
-        return $this->belongsTo(Unit::class);
     }
 
     public function scopeForCompany($query)

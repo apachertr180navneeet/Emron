@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\ItemController;
 use App\Http\Controllers\Admin\UnitController;
 use App\Http\Controllers\Admin\ItemAssignmentController;
 use App\Http\Controllers\Admin\PurchaseController;
+use App\Http\Controllers\Admin\ExpenseController;
 
 /*
 |--------------------------------------------------------------------------
@@ -106,6 +107,13 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::any('purchase/{purchase}/update', [PurchaseController::class, 'update'])->name('purchase.update');
     Route::post('purchase/{purchase}/toggle-status', [PurchaseController::class, 'toggleStatus'])->name('purchase.toggle');
     Route::delete('purchase/{purchase}', [PurchaseController::class, 'destroy'])->name('purchase.destroy');
+    Route::get('expense', [ExpenseController::class, 'index'])->name('expense.index');
+    Route::get('expense/create', [ExpenseController::class, 'create'])->name('expense.create');
+    Route::post('expense', [ExpenseController::class, 'store'])->name('expense.store');
+    Route::get('expense/{expense}/edit', [ExpenseController::class, 'edit'])->name('expense.edit');
+    Route::any('expense/{expense}/update', [ExpenseController::class, 'update'])->name('expense.update');
+    Route::post('expense/{expense}/toggle-status', [ExpenseController::class, 'toggleStatus'])->name('expense.toggle');
+    Route::delete('expense/{expense}', [ExpenseController::class, 'destroy'])->name('expense.destroy');
 });
 
 Route::name('company.')->group(function () {

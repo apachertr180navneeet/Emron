@@ -83,6 +83,11 @@
                     </a>
                 </li>
                 <li class="nav-item mb-1">
+                    <a href="{{route('admin.expense.index')}}" class="nav-link d-flex align-items-center rounded-3 {{ request()->routeIs('admin.expense.*') ? 'active' : '' }}" style="color:#94a3b8;padding:.75rem 1rem;font-size:.875rem">
+                        <i class="bi bi-cash-coin me-3 fs-5" style="color:#64748b"></i> Expense Master
+                    </a>
+                </li>
+                <li class="nav-item mb-1">
                     <a href="{{route('admin.item-assignment.index')}}" class="nav-link d-flex align-items-center rounded-3 {{ request()->routeIs('admin.item-assignment.*') ? 'active' : '' }}" style="color:#94a3b8;padding:.75rem 1rem;font-size:.875rem">
                         <i class="bi bi-link-45deg me-3 fs-5" style="color:#64748b"></i> Item Assignment
                     </a>

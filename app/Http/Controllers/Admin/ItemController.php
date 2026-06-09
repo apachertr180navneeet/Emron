@@ -61,10 +61,11 @@ class ItemController extends Controller
             'item_name'   => 'required|unique:items,item_name',
             'item_type'   => 'required',
             'unit_id'     => 'required|exists:units,id',
+            'size'        => 'nullable|string|max:255',
         ]);
 
         try {
-            $data = $request->only(['short_code', 'item_name', 'item_type', 'unit_id']);
+            $data = $request->only(['short_code', 'item_name', 'item_type', 'unit_id', 'size']);
             $data['company_id'] = $this->getCompanyId();
             $data['created_by'] = Auth::id();
             $data['status'] = 'active';
@@ -93,10 +94,11 @@ class ItemController extends Controller
             'item_name'   => 'required|unique:items,item_name,' . $item->id,
             'item_type'   => 'required',
             'unit_id'     => 'required|exists:units,id',
+            'size'        => 'nullable|string|max:255',
         ]);
 
         try {
-            $data = $request->only(['short_code', 'item_name', 'item_type', 'unit_id']);
+            $data = $request->only(['short_code', 'item_name', 'item_type', 'unit_id', 'size']);
             $item->update($data);
 
             return redirect()->route('admin.item.index')->with('success', 'Item updated successfully!');

@@ -43,6 +43,11 @@
                     </select>
                     @error('unit_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
                 </div>
+                <div class="col-md-4">
+                    <label class="form-label">Size</label>
+                    <input type="text" name="size" class="form-control @error('size') is-invalid @enderror" placeholder="e.g. 10mm, 1kg, etc." value="{{ old('size', $item->size) }}">
+                    @error('size')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                </div>
             </div>
 
             <div class="mt-4 pt-3 border-top d-flex gap-2 justify-content-end">
