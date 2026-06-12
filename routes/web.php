@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\UnitController;
 use App\Http\Controllers\Admin\ItemAssignmentController;
 use App\Http\Controllers\Admin\PurchaseController;
 use App\Http\Controllers\Admin\ExpenseController;
+use App\Http\Controllers\Admin\DispatchController;
 use Illuminate\Support\Facades\Artisan;
 
 /*
@@ -115,6 +116,13 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::any('expense/{expense}/update', [ExpenseController::class, 'update'])->name('expense.update');
     Route::post('expense/{expense}/toggle-status', [ExpenseController::class, 'toggleStatus'])->name('expense.toggle');
     Route::delete('expense/{expense}', [ExpenseController::class, 'destroy'])->name('expense.destroy');
+    Route::get('dispatch', [DispatchController::class, 'index'])->name('dispatch.index');
+    Route::get('dispatch/create', [DispatchController::class, 'create'])->name('dispatch.create');
+    Route::post('dispatch', [DispatchController::class, 'store'])->name('dispatch.store');
+    Route::get('dispatch/{dispatchOrder}/edit', [DispatchController::class, 'edit'])->name('dispatch.edit');
+    Route::any('dispatch/{dispatchOrder}/update', [DispatchController::class, 'update'])->name('dispatch.update');
+    Route::delete('dispatch/{dispatchOrder}', [DispatchController::class, 'destroy'])->name('dispatch.destroy');
+    Route::get('dispatch-reports', [DispatchController::class, 'reports'])->name('dispatch.reports');
     Route::get('run-migration', function () {
         try {
             Artisan::call('migrate', ['--force' => true]);

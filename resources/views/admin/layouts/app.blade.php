@@ -97,6 +97,11 @@
                         <i class="bi bi-cart3 me-3 fs-5" style="color:#64748b"></i> Purchase
                     </a>
                 </li>
+                <li class="nav-item mb-1">
+                    <a href="{{route('admin.dispatch.index')}}" class="nav-link d-flex align-items-center rounded-3 {{ request()->routeIs('admin.dispatch.*') ? 'active' : '' }}" style="color:#94a3b8;padding:.75rem 1rem;font-size:.875rem">
+                        <i class="bi bi-truck me-3 fs-5" style="color:#64748b"></i> Dispatch
+                    </a>
+                </li>
                 @endif
             </ul>
         </div>

@@ -67,6 +67,11 @@
                     <i class="bi bi-cart3"></i> Purchase
                 </a>
             </li>
+            <li class="nav-item">
+                <a href="{{route('admin.dispatch.index')}}" class="nav-link {{ request()->routeIs('admin.dispatch.*') ? 'active' : '' }}">
+                    <i class="bi bi-truck"></i> Dispatch
+                </a>
+            </li>
             @endif
         </ul>
     </nav>
