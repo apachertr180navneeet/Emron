@@ -17,6 +17,17 @@
                     <input type="text" name="unit_name" class="form-control @error('unit_name') is-invalid @enderror" placeholder="e.g. Pcs, Kg, Meter" value="{{ old('unit_name', $unit->unit_name) }}">
                     @error('unit_name')<div class="invalid-feedback">{{ $message }}</div>@enderror
                 </div>
+                <div class="col-md-3">
+                    <label class="form-label">Sub Unit</label>
+                    <input type="text" name="sub_unit" class="form-control @error('sub_unit') is-invalid @enderror" placeholder="e.g. gm, ml, mm" value="{{ old('sub_unit', $unit->sub_unit) }}">
+                    @error('sub_unit')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Subunit Value</label>
+                    <input type="number" name="subunit_value" class="form-control @error('subunit_value') is-invalid @enderror" placeholder="e.g. 1000" value="{{ old('subunit_value', $unit->subunit_value) }}" step="any">
+                    <small class="text-muted">1 Unit = ? Sub Unit (e.g. 1 Kg = 1000 gm)</small>
+                    @error('subunit_value')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                </div>
             </div>
 
             <div class="mt-4 pt-3 border-top d-flex gap-2 justify-content-end">

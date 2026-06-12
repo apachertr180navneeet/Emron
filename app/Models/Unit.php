@@ -13,6 +13,8 @@ class Unit extends Model
     protected $fillable = [
         'company_id',
         'unit_name',
+        'sub_unit',
+        'subunit_value',
         'status',
         'created_by',
     ];

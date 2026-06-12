@@ -52,6 +52,8 @@ class UnitController extends Controller
     {
         $request->validate([
             'unit_name' => 'required',
+            'sub_unit' => 'nullable',
+            'subunit_value' => 'nullable|numeric|min:0',
         ]);
 
         try {
@@ -79,6 +81,8 @@ class UnitController extends Controller
         $this->authorizeAccess($unit);
         $request->validate([
             'unit_name' => 'required',
+            'sub_unit' => 'nullable',
+            'subunit_value' => 'nullable|numeric|min:0',
         ]);
 
         try {
