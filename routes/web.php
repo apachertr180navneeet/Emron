@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\UnitController;
 use App\Http\Controllers\Admin\ItemAssignmentController;
 use App\Http\Controllers\Admin\PurchaseController;
 use App\Http\Controllers\Admin\ExpenseController;
+use Illuminate\Support\Facades\Artisan;
 
 /*
 |--------------------------------------------------------------------------
@@ -114,6 +115,14 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::any('expense/{expense}/update', [ExpenseController::class, 'update'])->name('expense.update');
     Route::post('expense/{expense}/toggle-status', [ExpenseController::class, 'toggleStatus'])->name('expense.toggle');
     Route::delete('expense/{expense}', [ExpenseController::class, 'destroy'])->name('expense.destroy');
+    Route::get('run-migration', function () {
+        try {
+            Artisan::call('migrate', ['--force' => true]);
+            return response(Artisan::output());
+        } catch (\Throwable $e) {
+            return response('Migration failed: ' . $e->getMessage(), 500);
+        }
+    })->name('run.migration');
 });
 
 Route::name('company.')->group(function () {
