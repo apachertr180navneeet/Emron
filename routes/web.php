@@ -14,6 +14,8 @@ use App\Http\Controllers\Admin\PurchaseController;
 use App\Http\Controllers\Admin\ExpenseController;
 use App\Http\Controllers\Admin\DispatchController;
 use App\Http\Controllers\Admin\ManufacturingController;
+use App\Http\Controllers\Admin\CostSheetController;
+use App\Http\Controllers\Admin\StockReconciliationController;
 use Illuminate\Support\Facades\Artisan;
 
 /*
@@ -131,6 +133,29 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::get('manufacturing/{manufacturing}', [ManufacturingController::class, 'show'])->name('manufacturing.show');
     Route::delete('manufacturing/{manufacturing}', [ManufacturingController::class, 'destroy'])->name('manufacturing.destroy');
     Route::get('stock-report', [ManufacturingController::class, 'stockReport'])->name('manufacturing.stock');
+    Route::get('item-price-report', [ManufacturingController::class, 'itemPriceReport'])->name('manufacturing.item-price');
+    Route::get('cost-sheet', [CostSheetController::class, 'index'])->name('cost-sheet.index');
+    Route::get('cost-sheet/create', [CostSheetController::class, 'create'])->name('cost-sheet.create');
+    Route::post('cost-sheet', [CostSheetController::class, 'store'])->name('cost-sheet.store');
+    Route::post('cost-sheet/get-bom', [CostSheetController::class, 'getBom'])->name('cost-sheet.get-bom');
+    Route::get('cost-sheet/{costSheet}/edit', [CostSheetController::class, 'edit'])->name('cost-sheet.edit');
+    Route::any('cost-sheet/{costSheet}/update', [CostSheetController::class, 'update'])->name('cost-sheet.update');
+    Route::get('cost-sheet/{costSheet}', [CostSheetController::class, 'show'])->name('cost-sheet.show');
+    Route::delete('cost-sheet/{costSheet}', [CostSheetController::class, 'destroy'])->name('cost-sheet.destroy');
+    Route::post('cost-sheet/{costSheet}/toggle-status', [CostSheetController::class, 'toggleStatus'])->name('cost-sheet.toggle');
+    Route::get('cost-sheet-export-excel', [CostSheetController::class, 'exportExcel'])->name('cost-sheet.export-excel');
+    Route::get('cost-sheet/{costSheet}/export-pdf', [CostSheetController::class, 'exportPdf'])->name('cost-sheet.export-pdf');
+    Route::get('cost-sheet-reports', [CostSheetController::class, 'costReport'])->name('cost-sheet.report');
+    Route::get('cost-sheet-material-report', [CostSheetController::class, 'materialConsumptionReport'])->name('cost-sheet.material-report');
+
+    Route::get('stock-reconciliation', [StockReconciliationController::class, 'index'])->name('stock-reconciliation.index');
+    Route::get('stock-reconciliation/create', [StockReconciliationController::class, 'create'])->name('stock-reconciliation.create');
+    Route::post('stock-reconciliation', [StockReconciliationController::class, 'store'])->name('stock-reconciliation.store');
+    Route::post('stock-reconciliation/get-item-stock', [StockReconciliationController::class, 'getItemStock'])->name('stock-reconciliation.get-item-stock');
+    Route::get('stock-reconciliation/{stockReconciliation}', [StockReconciliationController::class, 'show'])->name('stock-reconciliation.show');
+    Route::delete('stock-reconciliation/{stockReconciliation}', [StockReconciliationController::class, 'destroy'])->name('stock-reconciliation.destroy');
+    Route::post('stock-reconciliation/{stockReconciliation}/toggle-status', [StockReconciliationController::class, 'toggleStatus'])->name('stock-reconciliation.toggle');
+
     Route::get('run-migration', function () {
         try {
             Artisan::call('migrate', ['--force' => true]);

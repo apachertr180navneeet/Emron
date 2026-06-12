@@ -112,6 +112,31 @@
                         <i class="bi bi-boxes me-3 fs-5" style="color:#64748b"></i> Stock Report
                     </a>
                 </li>
+                <li class="nav-item mb-1">
+                    <a href="{{route('admin.manufacturing.item-price')}}" class="nav-link d-flex align-items-center rounded-3 {{ request()->routeIs('admin.manufacturing.item-price') ? 'active' : '' }}" style="color:#94a3b8;padding:.75rem 1rem;font-size:.875rem">
+                        <i class="bi bi-table me-3 fs-5" style="color:#64748b"></i> Item Price by Month
+                    </a>
+                </li>
+                <li class="nav-item mb-1">
+                    <a href="{{route('admin.stock-reconciliation.index')}}" class="nav-link d-flex align-items-center rounded-3 {{ request()->routeIs('admin.stock-reconciliation.*') ? 'active' : '' }}" style="color:#94a3b8;padding:.75rem 1rem;font-size:.875rem">
+                        <i class="bi bi-clipboard-check me-3 fs-5" style="color:#64748b"></i> Stock Reconciliation
+                    </a>
+                </li>
+                <li class="nav-item mb-1">
+                    <a href="{{route('admin.cost-sheet.index')}}" class="nav-link d-flex align-items-center rounded-3 {{ request()->routeIs('admin.cost-sheet.*') && !request()->routeIs('admin.cost-sheet.report') && !request()->routeIs('admin.cost-sheet.material-report') ? 'active' : '' }}" style="color:#94a3b8;padding:.75rem 1rem;font-size:.875rem">
+                        <i class="bi bi-calculator me-3 fs-5" style="color:#64748b"></i> Cost Sheet
+                    </a>
+                </li>
+                <li class="nav-item mb-1" style="padding-left:2.5rem">
+                    <a href="{{route('admin.cost-sheet.report')}}" class="nav-link d-flex align-items-center rounded-3 {{ request()->routeIs('admin.cost-sheet.report') ? 'active' : '' }}" style="color:#94a3b8;padding:.5rem 1rem;font-size:.8125rem">
+                        <i class="bi bi-bar-chart me-3 fs-6" style="color:#64748b"></i> Cost Report
+                    </a>
+                </li>
+                <li class="nav-item mb-1" style="padding-left:2.5rem">
+                    <a href="{{route('admin.cost-sheet.material-report')}}" class="nav-link d-flex align-items-center rounded-3 {{ request()->routeIs('admin.cost-sheet.material-report') ? 'active' : '' }}" style="color:#94a3b8;padding:.5rem 1rem;font-size:.8125rem">
+                        <i class="bi bi-boxes me-3 fs-6" style="color:#64748b"></i> Material Report
+                    </a>
+                </li>
                 @endif
             </ul>
         </div>

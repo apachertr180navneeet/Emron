@@ -12,6 +12,7 @@ use App\Models\ItemAssignment;
 use App\Models\Item;
 use App\Models\PurchaseBatch;
 use App\Models\StockLedger;
+use App\Models\PurchaseItem;
 use Exception;
 
 class ManufacturingController extends Controller
@@ -333,6 +334,93 @@ class ManufacturingController extends Controller
         })->values();
 
         return view('admin.manufacturing.stock_report', compact('items', 'batches', 'itemWiseStock'));
+    }
+
+    public function itemPriceReport(Request $request)
+    {
+        $companyId = $this->getCompanyId();
+
+        $query = PurchaseItem::with('item', 'purchase')
+            ->whereHas('purchase', function ($q) use ($companyId) {
+                if ($companyId) {
+                    $q->where('company_id', $companyId);
+                }
+                $q->where('purchase_status', 'Approved');
+            });
+
+        if ($request->filled('item_id')) {
+            $query->where('item_id', $request->item_id);
+        }
+        if ($request->filled('item_type')) {
+            $query->whereHas('item', function ($q) use ($request) {
+                $q->where('item_type', $request->item_type);
+            });
+        }
+        if ($request->filled('from_date')) {
+            $query->whereHas('purchase', function ($q) use ($request) {
+                $q->whereDate('purchase_date', '>=', $request->from_date);
+            });
+        }
+        if ($request->filled('to_date')) {
+            $query->whereHas('purchase', function ($q) use ($request) {
+                $q->whereDate('purchase_date', '<=', $request->to_date);
+            });
+        }
+
+        $purchaseItems = $query->orderBy('item_id')->orderBy('id', 'desc')->get();
+
+        // Group by item and by month
+        $priceData = [];
+        $months = [];
+
+        foreach ($purchaseItems as $pi) {
+            $monthKey = $pi->purchase->purchase_date->format('Y-m');
+            $monthLabel = $pi->purchase->purchase_date->format('M Y');
+            $itemId = $pi->item_id;
+
+            if (!in_array($monthKey, $months)) {
+                $months[$monthKey] = $monthLabel;
+            }
+
+            if (!isset($priceData[$itemId])) {
+                $priceData[$itemId] = [
+                    'item_name' => $pi->item->item_name ?? $pi->item_name,
+                    'item_type' => $pi->item->item_type ?? '',
+                    'short_code' => $pi->item->short_code ?? '',
+                    'months' => [],
+                    'avg_rate' => 0,
+                    'total_qty' => 0,
+                ];
+            }
+
+            if (!isset($priceData[$itemId]['months'][$monthKey])) {
+                $priceData[$itemId]['months'][$monthKey] = ['qty' => 0, 'total' => 0, 'rate' => 0];
+            }
+
+            $priceData[$itemId]['months'][$monthKey]['qty'] += $pi->quantity;
+            $priceData[$itemId]['months'][$monthKey]['total'] += $pi->amount;
+            $priceData[$itemId]['total_qty'] += $pi->quantity;
+        }
+
+        // Calculate rates per month
+        foreach ($priceData as $itemId => &$data) {
+            $totalAmount = 0;
+            $totalQty = 0;
+            foreach ($data['months'] as $mKey => &$mData) {
+                $mData['rate'] = $mData['qty'] > 0 ? round($mData['total'] / $mData['qty'], 2) : 0;
+                $totalAmount += $mData['total'];
+                $totalQty += $mData['qty'];
+            }
+            $data['avg_rate'] = $totalQty > 0 ? round($totalAmount / $totalQty, 2) : 0;
+        }
+        unset($data);
+
+        // Sort months chronologically
+        ksort($months);
+
+        $items = Item::forCompany()->where('status', 'active')->orderBy('item_type')->orderBy('item_name')->get();
+
+        return view('admin.manufacturing.item_price_report', compact('priceData', 'months', 'items'));
     }
 
     protected function authorizeAccess(Manufacturing $manufacturing)

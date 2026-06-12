@@ -82,6 +82,31 @@
                     <i class="bi bi-boxes"></i> Stock Report
                 </a>
             </li>
+            <li class="nav-item">
+                <a href="{{route('admin.manufacturing.item-price')}}" class="nav-link {{ request()->routeIs('admin.manufacturing.item-price') ? 'active' : '' }}">
+                    <i class="bi bi-table"></i> Item Price by Month
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{route('admin.stock-reconciliation.index')}}" class="nav-link {{ request()->routeIs('admin.stock-reconciliation.*') ? 'active' : '' }}">
+                    <i class="bi bi-clipboard-check"></i> Stock Reconciliation
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{route('admin.cost-sheet.index')}}" class="nav-link {{ request()->routeIs('admin.cost-sheet.*') && !request()->routeIs('admin.cost-sheet.report') && !request()->routeIs('admin.cost-sheet.material-report') ? 'active' : '' }}">
+                    <i class="bi bi-calculator"></i> Cost Sheet
+                </a>
+            </li>
+            <li class="nav-item" style="padding-left:1.5rem">
+                <a href="{{route('admin.cost-sheet.report')}}" class="nav-link small {{ request()->routeIs('admin.cost-sheet.report') ? 'active' : '' }}">
+                    <i class="bi bi-bar-chart"></i> Cost Report
+                </a>
+            </li>
+            <li class="nav-item" style="padding-left:1.5rem">
+                <a href="{{route('admin.cost-sheet.material-report')}}" class="nav-link small {{ request()->routeIs('admin.cost-sheet.material-report') ? 'active' : '' }}">
+                    <i class="bi bi-boxes"></i> Material Report
+                </a>
+            </li>
             @endif
         </ul>
     </nav>
