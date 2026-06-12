@@ -102,6 +102,16 @@
                         <i class="bi bi-truck me-3 fs-5" style="color:#64748b"></i> Dispatch
                     </a>
                 </li>
+                <li class="nav-item mb-1">
+                    <a href="{{route('admin.manufacturing.index')}}" class="nav-link d-flex align-items-center rounded-3 {{ request()->routeIs('admin.manufacturing.*') && !request()->routeIs('admin.manufacturing.stock') ? 'active' : '' }}" style="color:#94a3b8;padding:.75rem 1rem;font-size:.875rem">
+                        <i class="bi bi-gear me-3 fs-5" style="color:#64748b"></i> Manufacturing
+                    </a>
+                </li>
+                <li class="nav-item mb-1">
+                    <a href="{{route('admin.manufacturing.stock')}}" class="nav-link d-flex align-items-center rounded-3 {{ request()->routeIs('admin.manufacturing.stock') ? 'active' : '' }}" style="color:#94a3b8;padding:.75rem 1rem;font-size:.875rem">
+                        <i class="bi bi-boxes me-3 fs-5" style="color:#64748b"></i> Stock Report
+                    </a>
+                </li>
                 @endif
             </ul>
         </div>

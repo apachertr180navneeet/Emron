@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Purchase;
 use App\Models\PurchaseItem;
+use App\Models\PurchaseBatch;
+use App\Models\StockLedger;
 use App\Models\Vendor;
 use App\Models\Item;
 use App\Models\Unit;
@@ -122,7 +124,7 @@ class PurchaseController extends Controller
             ]);
 
             foreach ($request->items as $item) {
-                $purchase->items()->create([
+                $purchaseItem = $purchase->items()->create([
                     'item_id'    => $item['item_id'] ?? null,
                     'item_name'  => $item['item_name'],
                     'unit'       => $item['unit'],
@@ -131,6 +133,37 @@ class PurchaseController extends Controller
                     'amount'     => $item['amount'],
                     'created_by' => Auth::id(),
                 ]);
+
+                // Create purchase batch for FIFO tracking
+                if ($item['item_id']) {
+                    PurchaseBatch::create([
+                        'company_id'   => $purchase->company_id,
+                        'purchase_id'  => $purchase->id,
+                        'item_id'      => $item['item_id'],
+                        'received_qty' => $item['quantity'],
+                        'consumed_qty' => 0,
+                        'balance_qty'  => $item['quantity'],
+                        'purchase_date'=> $request->purchase_date,
+                    ]);
+
+                    // Stock ledger entry for purchase
+                    $ledger = StockLedger::where('item_id', $item['item_id'])
+                        ->where('company_id', $purchase->company_id)
+                        ->orderBy('id', 'desc')
+                        ->value('balance_qty') ?? 0;
+
+                    StockLedger::create([
+                        'company_id'       => $purchase->company_id,
+                        'item_id'          => $item['item_id'],
+                        'transaction_type' => 'Purchase',
+                        'reference_id'     => $purchase->id,
+                        'batch_id'         => null,
+                        'qty_in'           => $item['quantity'],
+                        'qty_out'          => 0,
+                        'balance_qty'      => $ledger + $item['quantity'],
+                        'transaction_date' => $request->purchase_date,
+                    ]);
+                }
             }
 
             return redirect()->route('admin.purchase.index')->with('success', 'Purchase created successfully!');

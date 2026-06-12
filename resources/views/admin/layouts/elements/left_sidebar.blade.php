@@ -72,6 +72,16 @@
                     <i class="bi bi-truck"></i> Dispatch
                 </a>
             </li>
+            <li class="nav-item">
+                <a href="{{route('admin.manufacturing.index')}}" class="nav-link {{ request()->routeIs('admin.manufacturing.*') && !request()->routeIs('admin.manufacturing.stock') ? 'active' : '' }}">
+                    <i class="bi bi-gear"></i> Manufacturing
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{route('admin.manufacturing.stock')}}" class="nav-link {{ request()->routeIs('admin.manufacturing.stock') ? 'active' : '' }}">
+                    <i class="bi bi-boxes"></i> Stock Report
+                </a>
+            </li>
             @endif
         </ul>
     </nav>

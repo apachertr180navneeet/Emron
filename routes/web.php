@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\ItemAssignmentController;
 use App\Http\Controllers\Admin\PurchaseController;
 use App\Http\Controllers\Admin\ExpenseController;
 use App\Http\Controllers\Admin\DispatchController;
+use App\Http\Controllers\Admin\ManufacturingController;
 use Illuminate\Support\Facades\Artisan;
 
 /*
@@ -123,6 +124,13 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::any('dispatch/{dispatchOrder}/update', [DispatchController::class, 'update'])->name('dispatch.update');
     Route::delete('dispatch/{dispatchOrder}', [DispatchController::class, 'destroy'])->name('dispatch.destroy');
     Route::get('dispatch-reports', [DispatchController::class, 'reports'])->name('dispatch.reports');
+    Route::get('manufacturing', [ManufacturingController::class, 'index'])->name('manufacturing.index');
+    Route::get('manufacturing/create', [ManufacturingController::class, 'create'])->name('manufacturing.create');
+    Route::post('manufacturing', [ManufacturingController::class, 'store'])->name('manufacturing.store');
+    Route::post('manufacturing/get-bom', [ManufacturingController::class, 'getBom'])->name('manufacturing.get-bom');
+    Route::get('manufacturing/{manufacturing}', [ManufacturingController::class, 'show'])->name('manufacturing.show');
+    Route::delete('manufacturing/{manufacturing}', [ManufacturingController::class, 'destroy'])->name('manufacturing.destroy');
+    Route::get('stock-report', [ManufacturingController::class, 'stockReport'])->name('manufacturing.stock');
     Route::get('run-migration', function () {
         try {
             Artisan::call('migrate', ['--force' => true]);
