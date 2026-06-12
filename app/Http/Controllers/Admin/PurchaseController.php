@@ -80,7 +80,6 @@ class PurchaseController extends Controller
             'transport_charges'  => 'required|numeric|min:0',
             'other_charges'      => 'required|numeric|min:0',
             'total_amount'       => 'required|numeric|min:0',
-            'purchase_status'    => 'required|in:Pending,Completed,Cancelled',
             'notes'              => 'nullable|max:1000',
             'items'              => 'required|array|min:1',
             'items.*.item_id'    => 'nullable|exists:items,id',
@@ -116,7 +115,7 @@ class PurchaseController extends Controller
                 'transport_charges' => $transportCharges,
                 'other_charges'     => $otherCharges,
                 'total_amount'      => round($totalAmount, 2),
-                'purchase_status'   => $request->purchase_status,
+                'purchase_status'   => 'Completed',
                 'notes'             => $request->notes,
                 'status'            => 'active',
                 'created_by'        => Auth::id(),
@@ -171,7 +170,6 @@ class PurchaseController extends Controller
             'transport_charges'  => 'required|numeric|min:0',
             'other_charges'      => 'required|numeric|min:0',
             'total_amount'       => 'required|numeric|min:0',
-            'purchase_status'    => 'required|in:Pending,Completed,Cancelled',
             'notes'              => 'nullable|max:1000',
             'items'              => 'required|array|min:1',
             'items.*.item_id'    => 'nullable|exists:items,id',
@@ -206,7 +204,6 @@ class PurchaseController extends Controller
                 'transport_charges' => $transportCharges,
                 'other_charges'     => $otherCharges,
                 'total_amount'      => round($totalAmount, 2),
-                'purchase_status'   => $request->purchase_status,
                 'notes'             => $request->notes,
             ]);
 

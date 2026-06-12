@@ -52,7 +52,7 @@
                 </div>
             </div>
             <div class="row g-4 mb-4">
-                <div class="col-md-4">
+                {{--  <div class="col-md-4">
                     <label class="form-label">Purchase Status <span class="text-danger">*</span></label>
                     <select name="purchase_status" class="form-select @error('purchase_status') is-invalid @enderror">
                         <option value="Pending" {{ old('purchase_status') == 'Pending' ? 'selected' : '' }}>Pending</option>
@@ -60,7 +60,7 @@
                         <option value="Cancelled" {{ old('purchase_status') == 'Cancelled' ? 'selected' : '' }}>Cancelled</option>
                     </select>
                     @error('purchase_status')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                </div>
+                </div>  --}}
                 <div class="col-md-8">
                     <label class="form-label">Remarks</label>
                     <textarea name="notes" class="form-control @error('notes') is-invalid @enderror" rows="1" placeholder="Enter remarks...">{{ old('notes') }}</textarea>
