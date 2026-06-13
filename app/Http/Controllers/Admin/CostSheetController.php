@@ -774,7 +774,7 @@ class CostSheetController extends Controller
                     ->where('company_id', $companyId)
                     ->sum('consumed_qty');
                 $stockSummary[$matId] = [
-                    'name' => $item->rawMaterial->item_name ?? 'Unknown',
+                    'name' => $item->rawMaterial?->item_name ?? 'Unknown',
                     'opening' => $totalReceived,
                     'consumed' => $totalConsumed,
                     'closing' => $totalReceived - $totalConsumed,

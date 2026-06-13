@@ -14,9 +14,9 @@
         @forelse($reports as $item)
         <tr>
             <td class="px-4">{{ $item->costSheet?->date?->format('d-m-Y') ?? '—' }}</td>
-            <td class="px-4 fw-bold text-dark">{{ $item->costSheet->bom_no ?? '—' }}</td>
-            <td class="px-4">{{ $item->costSheet->product->item_name ?? '—' }}</td>
-            <td class="px-4">{{ $item->rawMaterial->item_name ?? '—' }}</td>
+            <td class="px-4 fw-bold text-dark">{{ $item->costSheet?->bom_no ?? '—' }}</td>
+            <td class="px-4">{{ $item->costSheet?->product?->item_name ?? '—' }}</td>
+            <td class="px-4">{{ $item->rawMaterial?->item_name ?? '—' }}</td>
             <td class="px-4 text-center fw-bold">{{ $item->required_qty }} {{ $item->unit_name }}</td>
             <td class="px-4 text-end">₹ {{ number_format($item->fifo_rate, 2) }}</td>
             <td class="px-4 text-end fw-bold">₹ {{ number_format($item->amount, 2) }}</td>
