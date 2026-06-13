@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use Hash, Validator, Session, File, Exception;
+use Illuminate\Support\Facades\Log;
 
 class AdminAuthController extends Controller
 {
@@ -27,6 +28,7 @@ class AdminAuthController extends Controller
 
         }
         catch(\Throwable $e){
+            Log::error('AdminAuthController::index error: ' . $e->getMessage());
             return back()->with("error", 'An error occurred');
         }
     }
@@ -59,6 +61,7 @@ class AdminAuthController extends Controller
 
         }
         catch(\Throwable $e){
+            Log::error('AdminAuthController::postLogin error: ' . $e->getMessage());
             return back()->with("error", 'An error occurred');
         }
     }
@@ -86,6 +89,7 @@ class AdminAuthController extends Controller
             return back()->with("success", "Password changed successfully!");
         }
         catch(\Throwable $e){
+            Log::error('AdminAuthController::updatePassword error: ' . $e->getMessage());
             return back()->with("error", 'An error occurred');
         }
     }
@@ -101,6 +105,7 @@ class AdminAuthController extends Controller
             return redirect()->route("admin.login")->withSuccess('Logout Successful!');
         }
         catch(\Throwable $e){
+            Log::error('AdminAuthController::logout error: ' . $e->getMessage());
             return back()->with("error", 'An error occurred');
         }
     }
@@ -113,6 +118,7 @@ class AdminAuthController extends Controller
 
         }
         catch(\Throwable $e){
+            Log::error('AdminAuthController::adminProfile error: ' . $e->getMessage());
             return back()->with("error", 'An error occurred');
         }
     }
@@ -155,6 +161,7 @@ class AdminAuthController extends Controller
             return redirect()->back()->with("success", "Profile update successfully!");
         }
         catch (\Throwable $e) {
+            Log::error('AdminAuthController::updateAdminProfile error: ' . $e->getMessage());
             return redirect()->back()->with("error", 'An error occurred');
         }
     }

@@ -26,7 +26,7 @@ class ItemAssignmentController extends Controller
 
         if ($user->role === 'admin') {
             $companies = Company::where('status', 'active')->orderBy('company_name')->get();
-            $currentCompanyId = $companies->isNotEmpty() ? $companies->first()->id : null;
+            $currentCompanyId = $companies->first()?->id;
         } else {
             $currentCompanyId = $user->company_id;
         }
@@ -85,7 +85,7 @@ class ItemAssignmentController extends Controller
 
         if (!$companyId) {
             $first = Company::where('status', 'active')->first();
-            $companyId = $first->id ?? null;
+            $companyId = $first ? $first->id : null;
         }
 
         $finishedItems = Item::where('item_type', 'Finished')

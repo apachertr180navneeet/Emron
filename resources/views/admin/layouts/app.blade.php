@@ -103,7 +103,7 @@
                     </a>
                 </li>
                 <li class="nav-item mb-1">
-                    <a href="{{route('admin.manufacturing.index')}}" class="nav-link d-flex align-items-center rounded-3 {{ request()->routeIs('admin.manufacturing.*') && !request()->routeIs('admin.manufacturing.stock') ? 'active' : '' }}" style="color:#94a3b8;padding:.75rem 1rem;font-size:.875rem">
+                    <a href="{{route('admin.manufacturing.index')}}" class="nav-link d-flex align-items-center rounded-3 {{ request()->routeIs('admin.manufacturing.*') && !request()->routeIs('admin.manufacturing.stock') && !request()->routeIs('admin.manufacturing.item-price') ? 'active' : '' }}" style="color:#94a3b8;padding:.75rem 1rem;font-size:.875rem">
                         <i class="bi bi-gear me-3 fs-5" style="color:#64748b"></i> Manufacturing
                     </a>
                 </li>

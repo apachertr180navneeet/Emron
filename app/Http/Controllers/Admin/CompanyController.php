@@ -10,6 +10,7 @@ use App\Models\User;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
 use Validator, File, Exception;
+use Illuminate\Support\Facades\DB;
 
 class CompanyController extends Controller
 {
@@ -71,6 +72,8 @@ class CompanyController extends Controller
             $data = $request->except(['logo', 'password', 'username']);
             $data['status'] = 'active';
 
+            DB::beginTransaction();
+
             if ($request->file('logo')) {
                 $file = $request->file('logo');
                 $filename = time() . '_' . $file->getClientOriginalName();
@@ -105,8 +108,11 @@ class CompanyController extends Controller
                 'country'    => 'India',
             ]);
 
+            DB::commit();
+
             return redirect()->route('admin.company.index')->with('success', 'Company created successfully!');
         } catch (\Throwable $e) {
+            DB::rollBack();
             return back()->with('error', 'An error occurred');
         }
     }
@@ -134,8 +140,13 @@ class CompanyController extends Controller
                 return redirect()->back()->withInput()->withErrors($validator->errors());
             }
 
-            $data = $request->except('logo');
+            $data = $request->only([
+                'company_name', 'owner_name', 'mobile', 'email', 'city', 'address',
+                'state', 'pin_code', 'gst_no', 'pan_no', 'status'
+            ]);
             $data['status'] = $request->has('status') ? $request->status : $company->status;
+
+            DB::beginTransaction();
 
             if ($request->file('logo')) {
                 if ($company->logo && File::exists(public_path($company->logo))) {
@@ -175,8 +186,11 @@ class CompanyController extends Controller
                 $user->update($userData);
             }
 
+            DB::commit();
+
             return redirect()->route('admin.company.index')->with('success', 'Company updated successfully!');
         } catch (\Throwable $e) {
+            DB::rollBack();
             return back()->with('error', 'An error occurred');
         }
     }

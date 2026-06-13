@@ -73,15 +73,14 @@ class PurchaseController extends Controller
             'purchase_date'      => 'required|date',
             'bno'                => 'required|max:255',
             'challan_no'         => 'required|max:255',
+            'invoice_no'         => 'nullable|max:255',
             'transport'          => 'nullable|max:255',
             'lr_no'              => 'nullable|max:255',
             'subtotal'           => 'required|numeric|min:0',
             'gst_percentage'     => 'required|numeric|min:0|max:100',
-            'tax_amount'         => 'required|numeric|min:0',
             'discount'           => 'required|numeric|min:0',
             'transport_charges'  => 'required|numeric|min:0',
             'other_charges'      => 'required|numeric|min:0',
-            'total_amount'       => 'required|numeric|min:0',
             'notes'              => 'nullable|max:1000',
             'items'              => 'required|array|min:1',
             'items.*.item_id'    => 'nullable|exists:items,id',
@@ -106,7 +105,7 @@ class PurchaseController extends Controller
                 'company_id'        => $this->getCompanyId(),
                 'vendor_id'         => $request->vendor_id,
                 'purchase_date'     => $request->purchase_date,
-                'invoice_no'        => $request->challan_no,
+                'invoice_no'        => $request->invoice_no ?? $request->challan_no,
                 'bno'               => $request->bno,
                 'challan_no'        => $request->challan_no,
                 'transport'         => $request->transport,
@@ -197,15 +196,14 @@ class PurchaseController extends Controller
             'purchase_date'      => 'required|date',
             'bno'                => 'required|max:255',
             'challan_no'         => 'required|max:255',
+            'invoice_no'         => 'nullable|max:255',
             'transport'          => 'nullable|max:255',
             'lr_no'              => 'nullable|max:255',
             'subtotal'           => 'required|numeric|min:0',
             'gst_percentage'     => 'required|numeric|min:0|max:100',
-            'tax_amount'         => 'required|numeric|min:0',
             'discount'           => 'required|numeric|min:0',
             'transport_charges'  => 'required|numeric|min:0',
             'other_charges'      => 'required|numeric|min:0',
-            'total_amount'       => 'required|numeric|min:0',
             'notes'              => 'nullable|max:1000',
             'items'              => 'required|array|min:1',
             'items.*.item_id'    => 'nullable|exists:items,id',
@@ -229,7 +227,7 @@ class PurchaseController extends Controller
             $purchase->update([
                 'vendor_id'         => $request->vendor_id,
                 'purchase_date'     => $request->purchase_date,
-                'invoice_no'        => $request->challan_no,
+                'invoice_no'        => $request->invoice_no ?? $request->challan_no,
                 'bno'               => $request->bno,
                 'challan_no'        => $request->challan_no,
                 'transport'         => $request->transport,
@@ -244,10 +242,12 @@ class PurchaseController extends Controller
                 'notes'             => $request->notes,
             ]);
 
+            // Delete existing batch and ledger records
             PurchaseBatch::where('purchase_id', $purchase->id)->delete();
             StockLedger::where('reference_id', $purchase->id)->where('transaction_type', 'Purchase')->delete();
             $purchase->items()->delete();
 
+            // Recreate items, batches, and ledger entries
             foreach ($request->items as $item) {
                 $purchase->items()->create([
                     'item_id'    => $item['item_id'] ?? null,
@@ -258,6 +258,37 @@ class PurchaseController extends Controller
                     'amount'     => $item['amount'],
                     'created_by' => Auth::id(),
                 ]);
+
+                // Recreate purchase batch for FIFO tracking
+                if ($item['item_id']) {
+                    PurchaseBatch::create([
+                        'company_id'    => $purchase->company_id,
+                        'purchase_id'   => $purchase->id,
+                        'item_id'       => $item['item_id'],
+                        'received_qty'  => $item['quantity'],
+                        'consumed_qty'  => 0,
+                        'balance_qty'   => $item['quantity'],
+                        'purchase_date' => $request->purchase_date,
+                    ]);
+
+                    // Recreate stock ledger entry
+                    $ledger = StockLedger::where('item_id', $item['item_id'])
+                        ->where('company_id', $purchase->company_id)
+                        ->orderBy('id', 'desc')
+                        ->value('balance_qty') ?? 0;
+
+                    StockLedger::create([
+                        'company_id'       => $purchase->company_id,
+                        'item_id'          => $item['item_id'],
+                        'transaction_type' => 'Purchase',
+                        'reference_id'     => $purchase->id,
+                        'batch_id'         => null,
+                        'qty_in'           => $item['quantity'],
+                        'qty_out'          => 0,
+                        'balance_qty'      => $ledger + $item['quantity'],
+                        'transaction_date' => $request->purchase_date,
+                    ]);
+                }
             }
 
             DB::commit();
@@ -285,6 +316,17 @@ class PurchaseController extends Controller
         $this->authorizeAccess($purchase);
         try {
             DB::beginTransaction();
+
+            // Check if any batches from this purchase have been partially consumed
+            $consumedBatches = PurchaseBatch::where('purchase_id', $purchase->id)
+                ->where('consumed_qty', '>', 0)
+                ->exists();
+
+            if ($consumedBatches) {
+                DB::rollBack();
+                return back()->with('error', 'Cannot delete this purchase because some items have been consumed by manufacturing. Reverse manufacturing records first.');
+            }
+
             PurchaseBatch::where('purchase_id', $purchase->id)->delete();
             StockLedger::where('reference_id', $purchase->id)->where('transaction_type', 'Purchase')->delete();
             $purchase->items()->delete();

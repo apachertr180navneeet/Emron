@@ -16,6 +16,7 @@ use App\Http\Controllers\Admin\DispatchController;
 use App\Http\Controllers\Admin\ManufacturingController;
 use App\Http\Controllers\Admin\CostSheetController;
 use App\Http\Controllers\Admin\StockReconciliationController;
+use App\Http\Controllers\Web\CompanyAuthController;
 use Illuminate\Support\Facades\Artisan;
 
 /*
@@ -159,17 +160,17 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
 });
 
 Route::name('company.')->group(function () {
-    Route::get('company/login', [App\Http\Controllers\Web\CompanyAuthController::class, 'login'])->name('login');
-    Route::post('company/login', [App\Http\Controllers\Web\CompanyAuthController::class, 'postLogin'])->name('login.post')->middleware('throttle:5,1');
+    Route::get('company/login', [CompanyAuthController::class, 'login'])->name('login');
+    Route::post('company/login', [CompanyAuthController::class, 'postLogin'])->name('login.post')->middleware('throttle:5,1');
 });
 
 Route::middleware(['user'])->group(function () {
-    Route::get('company/dashboard', [App\Http\Controllers\Web\CompanyAuthController::class, 'dashboard'])->name('company.dashboard');
-    Route::get('company/profile', [App\Http\Controllers\Web\CompanyAuthController::class, 'profile'])->name('company.profile');
-    Route::post('company/profile', [App\Http\Controllers\Web\CompanyAuthController::class, 'updateProfile'])->name('company.profile.update');
-    Route::get('company/change-password', [App\Http\Controllers\Web\CompanyAuthController::class, 'changePassword'])->name('company.change.password');
-    Route::post('company/update-password', [App\Http\Controllers\Web\CompanyAuthController::class, 'updatePassword'])->name('company.password.update');
-    Route::post('company/logout', [App\Http\Controllers\Web\CompanyAuthController::class, 'logout'])->name('company.logout');
+    Route::get('company/dashboard', [CompanyAuthController::class, 'dashboard'])->name('company.dashboard');
+    Route::get('company/profile', [CompanyAuthController::class, 'profile'])->name('company.profile');
+    Route::post('company/profile', [CompanyAuthController::class, 'updateProfile'])->name('company.profile.update');
+    Route::get('company/change-password', [CompanyAuthController::class, 'changePassword'])->name('company.change.password');
+    Route::post('company/update-password', [CompanyAuthController::class, 'updatePassword'])->name('company.password.update');
+    Route::post('company/logout', [CompanyAuthController::class, 'logout'])->name('company.logout');
 });
 
 

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Item;
+use App\Models\Unit;
 use Exception;
 
 class ItemController extends Controller
@@ -50,7 +51,7 @@ class ItemController extends Controller
     public function create()
     {
         $itemTypes = ['Raw Material', 'Finished'];
-        $units = \App\Models\Unit::where('status', 'active')->get();
+        $units = \App\Models\Unit::forCompany()->where('status', 'active')->orderBy('unit_name')->get();
         return view('admin.item.create', compact('itemTypes', 'units'));
     }
 
@@ -82,7 +83,7 @@ class ItemController extends Controller
     {
         $this->authorizeAccess($item);
         $itemTypes = ['Raw Material', 'Finished'];
-        $units = \App\Models\Unit::where('status', 'active')->get();
+        $units = Unit::forCompany()->where('status', 'active')->orderBy('unit_name')->get();
         return view('admin.item.edit', compact('item', 'itemTypes', 'units'));
     }
 

@@ -11,7 +11,7 @@ return new class extends Migration
         Schema::create('manufacturing_cost_sheets', function (Blueprint $table) {
             $table->id();
             $table->foreignId('company_id')->nullable()->constrained()->nullOnDelete();
-            $table->string('bom_no');
+            $table->string('bom_no')->unique();
             $table->date('date');
             $table->unsignedBigInteger('product_id')->nullable();
             $table->decimal('qty', 10, 2)->default(0);

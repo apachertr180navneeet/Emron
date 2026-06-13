@@ -13,6 +13,7 @@ use App\Models\Item;
 use App\Models\PurchaseBatch;
 use App\Models\StockLedger;
 use App\Models\PurchaseItem;
+use Exception;
 
 class ManufacturingController extends Controller
 {
@@ -262,30 +263,32 @@ class ManufacturingController extends Controller
         try {
             DB::beginTransaction();
 
-            // Reverse stock ledger entries
-            StockLedger::where('reference_id', $manufacturing->id)
-                ->whereIn('transaction_type', ['Manufacturing Out', 'Manufacturing In'])
-                ->delete();
+            // Collect ledger entries and batch data BEFORE deleting anything
+            $outLedgers = StockLedger::where('reference_id', $manufacturing->id)
+                ->where('transaction_type', 'Manufacturing Out')
+                ->get();
 
-            // Restore batch balances
-            $details = $manufacturing->details;
-            foreach ($details as $detail) {
-                $consumedBatches = StockLedger::where('reference_id', $manufacturing->id)
-                    ->where('item_id', $detail->raw_material_id)
-                    ->where('transaction_type', 'Manufacturing Out')
-                    ->get();
+            // Also get Manufacturing In to reverse finished goods
+            $inLedgers = StockLedger::where('reference_id', $manufacturing->id)
+                ->where('transaction_type', 'Manufacturing In')
+                ->get();
 
-                foreach ($consumedBatches as $entry) {
-                    if ($entry->batch_id) {
-                        $batch = PurchaseBatch::find($entry->batch_id);
-                        if ($batch) {
-                            $batch->consumed_qty -= $entry->qty_out;
-                            $batch->balance_qty += $entry->qty_out;
-                            $batch->save();
-                        }
+            // Restore batch balances from collected ledger data
+            foreach ($outLedgers as $entry) {
+                if ($entry->batch_id) {
+                    $batch = PurchaseBatch::find($entry->batch_id);
+                    if ($batch) {
+                        $batch->consumed_qty -= $entry->qty_out;
+                        $batch->balance_qty += $entry->qty_out;
+                        $batch->save();
                     }
                 }
             }
+
+            // Now delete stock ledger entries
+            StockLedger::where('reference_id', $manufacturing->id)
+                ->whereIn('transaction_type', ['Manufacturing Out', 'Manufacturing In'])
+                ->delete();
 
             $manufacturing->details()->delete();
             $manufacturing->delete();

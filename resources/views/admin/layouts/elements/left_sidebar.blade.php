@@ -73,7 +73,7 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a href="{{route('admin.manufacturing.index')}}" class="nav-link {{ request()->routeIs('admin.manufacturing.*') && !request()->routeIs('admin.manufacturing.stock') ? 'active' : '' }}">
+                <a href="{{route('admin.manufacturing.index')}}" class="nav-link {{ request()->routeIs('admin.manufacturing.*') && !request()->routeIs('admin.manufacturing.stock') && !request()->routeIs('admin.manufacturing.item-price') ? 'active' : '' }}">
                     <i class="bi bi-gear"></i> Manufacturing
                 </a>
             </li>

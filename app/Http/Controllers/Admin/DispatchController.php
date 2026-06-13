@@ -5,10 +5,13 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use App\Models\DispatchOrder;
 use App\Models\DispatchOrderItem;
 use App\Models\Customer;
 use App\Models\Item;
+use App\Models\PurchaseBatch;
+use App\Models\StockLedger;
 
 class DispatchController extends Controller
 {
@@ -86,6 +89,8 @@ class DispatchController extends Controller
         ]);
 
         try {
+            DB::beginTransaction();
+
             $dispatchOrder = DispatchOrder::create([
                 'company_id'      => $this->getCompanyId(),
                 'dispatch_date'   => $request->dispatch_date,
@@ -99,6 +104,8 @@ class DispatchController extends Controller
                 'created_by'      => Auth::id(),
             ]);
 
+            $companyId = $this->getCompanyId();
+
             foreach ($request->items as $item) {
                 $dispatchOrder->items()->create([
                     'lot_no'  => $item['lot_no'],
@@ -108,10 +115,17 @@ class DispatchController extends Controller
                     'rate'    => $item['rate'],
                     'amount'  => $item['amount'],
                 ]);
+
+                if ($item['item_id']) {
+                    $this->deductStockFifo($companyId, $item['item_id'], $item['qty'], $dispatchOrder->id, $request->dispatch_date);
+                }
             }
+
+            DB::commit();
 
             return redirect()->route('admin.dispatch.index')->with('success', 'Dispatch order created successfully!');
         } catch (\Throwable $e) {
+            DB::rollBack();
             return back()->with('error', 'An error occurred.')->withInput();
         }
     }
@@ -150,6 +164,11 @@ class DispatchController extends Controller
         ]);
 
         try {
+            DB::beginTransaction();
+
+            // Reverse previous stock deductions
+            $this->reverseStockDeductions($dispatchOrder->id);
+
             $dispatchOrder->update([
                 'dispatch_date'   => $request->dispatch_date,
                 'challan_no'      => $request->challan_no,
@@ -162,6 +181,8 @@ class DispatchController extends Controller
 
             $dispatchOrder->items()->delete();
 
+            $companyId = $this->getCompanyId();
+
             foreach ($request->items as $item) {
                 $dispatchOrder->items()->create([
                     'lot_no'  => $item['lot_no'],
@@ -171,10 +192,17 @@ class DispatchController extends Controller
                     'rate'    => $item['rate'],
                     'amount'  => $item['amount'],
                 ]);
+
+                if ($item['item_id']) {
+                    $this->deductStockFifo($companyId, $item['item_id'], $item['qty'], $dispatchOrder->id, $request->dispatch_date);
+                }
             }
+
+            DB::commit();
 
             return redirect()->route('admin.dispatch.index')->with('success', 'Dispatch order updated successfully!');
         } catch (\Throwable $e) {
+            DB::rollBack();
             return back()->with('error', 'An error occurred.')->withInput();
         }
     }
@@ -183,10 +211,14 @@ class DispatchController extends Controller
     {
         $this->authorizeAccess($dispatchOrder);
         try {
+            DB::beginTransaction();
+            $this->reverseStockDeductions($dispatchOrder->id);
             $dispatchOrder->items()->delete();
             $dispatchOrder->delete();
+            DB::commit();
             return redirect()->route('admin.dispatch.index')->with('success', 'Dispatch order deleted successfully!');
         } catch (\Throwable $e) {
+            DB::rollBack();
             return back()->with('error', 'An error occurred.');
         }
     }
@@ -257,6 +289,67 @@ class DispatchController extends Controller
             'dispatchOrders', 'customers', 'reportType',
             'customerWise', 'transportWise', 'statusWise'
         ));
+    }
+
+    protected function reverseStockDeductions($dispatchOrderId)
+    {
+        $outLedgers = StockLedger::where('reference_id', $dispatchOrderId)
+            ->where('transaction_type', 'Dispatch Out')
+            ->get();
+
+        foreach ($outLedgers as $entry) {
+            if ($entry->batch_id) {
+                $batch = PurchaseBatch::find($entry->batch_id);
+                if ($batch) {
+                    $batch->consumed_qty -= $entry->qty_out;
+                    $batch->balance_qty += $entry->qty_out;
+                    $batch->save();
+                }
+            }
+        }
+
+        StockLedger::where('reference_id', $dispatchOrderId)
+            ->where('transaction_type', 'Dispatch Out')
+            ->delete();
+    }
+
+    protected function deductStockFifo($companyId, $itemId, $qty, $referenceId, $transactionDate)
+    {
+        $remainingQty = $qty;
+        $batches = PurchaseBatch::where('item_id', $itemId)
+            ->where('company_id', $companyId)
+            ->where('balance_qty', '>', 0)
+            ->orderBy('purchase_date', 'asc')
+            ->orderBy('id', 'asc')
+            ->get();
+
+        foreach ($batches as $batch) {
+            if ($remainingQty <= 0) break;
+
+            $consumeQty = min($batch->balance_qty, $remainingQty);
+            $batch->consumed_qty += $consumeQty;
+            $batch->balance_qty -= $consumeQty;
+            $batch->save();
+
+            $ledger = StockLedger::where('item_id', $itemId)
+                ->where('company_id', $companyId)
+                ->orderBy('id', 'desc')
+                ->value('balance_qty') ?? 0;
+
+            StockLedger::create([
+                'company_id'       => $companyId,
+                'item_id'          => $itemId,
+                'transaction_type' => 'Dispatch Out',
+                'reference_id'     => $referenceId,
+                'batch_id'         => $batch->id,
+                'qty_in'           => 0,
+                'qty_out'          => $consumeQty,
+                'balance_qty'      => $ledger - $consumeQty,
+                'transaction_date' => $transactionDate,
+            ]);
+
+            $remainingQty -= $consumeQty;
+        }
     }
 
     protected function authorizeAccess(DispatchOrder $dispatchOrder)

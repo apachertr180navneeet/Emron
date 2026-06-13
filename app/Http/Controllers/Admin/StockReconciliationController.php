@@ -167,6 +167,16 @@ class StockReconciliationController extends Controller
 
             if ($diff > 0) {
                 // Excess stock found - add to system
+                $batch = PurchaseBatch::create([
+                    'company_id'   => $companyId,
+                    'purchase_id'  => null,
+                    'item_id'      => $item->item_id,
+                    'received_qty' => $diff,
+                    'consumed_qty' => 0,
+                    'balance_qty'  => $diff,
+                    'purchase_date'=> $reconciliation->reconciliation_date,
+                ]);
+
                 $lastLedger = StockLedger::where('item_id', $item->item_id)
                     ->where('company_id', $companyId)
                     ->orderBy('id', 'desc')
@@ -177,21 +187,11 @@ class StockReconciliationController extends Controller
                     'item_id'          => $item->item_id,
                     'transaction_type' => 'Reconciliation In',
                     'reference_id'     => $reconciliation->id,
-                    'batch_id'         => null,
+                    'batch_id'         => $batch->id,
                     'qty_in'           => $diff,
                     'qty_out'          => 0,
                     'balance_qty'      => $lastLedger + $diff,
                     'transaction_date' => $reconciliation->reconciliation_date,
-                ]);
-
-                PurchaseBatch::create([
-                    'company_id'   => $companyId,
-                    'purchase_id'  => null,
-                    'item_id'      => $item->item_id,
-                    'received_qty' => $diff,
-                    'consumed_qty' => 0,
-                    'balance_qty'  => $diff,
-                    'purchase_date'=> $reconciliation->reconciliation_date,
                 ]);
             } else {
                 // Shortage - consume from FIFO batches
@@ -254,20 +254,9 @@ class StockReconciliationController extends Controller
             if ($stockReconciliation->status == 'Posted') {
                 $stockReconciliation->load('items');
 
-                // Collect data for positive differences before deleting ledgers
-                $positiveDifferences = [];
-                foreach ($stockReconciliation->items as $item) {
-                    if ($item->difference_qty > 0) {
-                        $positiveDifferences[] = [
-                            'item_id' => $item->item_id,
-                            'qty' => $item->difference_qty,
-                        ];
-                    }
-                }
-
-                // Collect ledger data for batch restoration (negative diffs)
-                $outLedgersData = StockLedger::where('reference_id', $stockReconciliation->id)
-                    ->where('transaction_type', 'Reconciliation Out')
+                // Collect all reconciliation ledger data before deletion
+                $allLedgers = StockLedger::where('reference_id', $stockReconciliation->id)
+                    ->whereIn('transaction_type', ['Reconciliation In', 'Reconciliation Out'])
                     ->get();
 
                 // Delete all reconciliation ledger entries
@@ -275,9 +264,9 @@ class StockReconciliationController extends Controller
                     ->whereIn('transaction_type', ['Reconciliation In', 'Reconciliation Out'])
                     ->delete();
 
-                // Restore batch balances from collected data
-                foreach ($outLedgersData as $entry) {
-                    if ($entry->batch_id) {
+                // Restore batch balances for negative differences
+                foreach ($allLedgers as $entry) {
+                    if ($entry->transaction_type === 'Reconciliation Out' && $entry->batch_id) {
                         $batch = PurchaseBatch::find($entry->batch_id);
                         if ($batch) {
                             $batch->consumed_qty -= $entry->qty_out;
@@ -287,14 +276,13 @@ class StockReconciliationController extends Controller
                     }
                 }
 
-                // Remove PurchaseBatch entries created for positive differences
-                foreach ($positiveDifferences as $pd) {
-                    PurchaseBatch::where('item_id', $pd['item_id'])
-                        ->where('company_id', $stockReconciliation->company_id)
-                        ->where('purchase_id', null)
-                        ->where('received_qty', $pd['qty'])
-                        ->where('balance_qty', $pd['qty'])
-                        ->delete();
+                // Remove PurchaseBatch entries created for positive differences using batch_id
+                foreach ($allLedgers as $entry) {
+                    if ($entry->transaction_type === 'Reconciliation In' && $entry->batch_id) {
+                        PurchaseBatch::where('id', $entry->batch_id)
+                            ->where('company_id', $stockReconciliation->company_id)
+                            ->delete();
+                    }
                 }
             }
 
@@ -313,20 +301,19 @@ class StockReconciliationController extends Controller
     {
         $this->authorizeAccess($stockReconciliation);
         try {
+            if ($stockReconciliation->status == 'Posted') {
+                return response()->json(['success' => false, 'message' => 'Posted reconciliations cannot be toggled.']);
+            }
+
             DB::beginTransaction();
 
             $companyId = $this->getCompanyId() ?? $stockReconciliation->company_id;
 
-            if ($stockReconciliation->status == 'Draft') {
-                $stockReconciliation->load('items');
-                $this->postReconciliation($stockReconciliation, $companyId);
-                DB::commit();
-                return response()->json(['success' => true, 'status' => 'Posted']);
-            }
-
+            $stockReconciliation->load('items');
+            $this->postReconciliation($stockReconciliation, $companyId);
             DB::commit();
-            return response()->json(['success' => true, 'status' => $stockReconciliation->status]);
-        } catch (Exception $e) {
+            return response()->json(['success' => true, 'status' => 'Posted']);
+        } catch (\Throwable $e) {
             DB::rollBack();
             return response()->json(['success' => false, 'message' => 'An error occurred.']);
         }
