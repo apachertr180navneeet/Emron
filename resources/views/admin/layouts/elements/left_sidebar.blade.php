@@ -121,10 +121,16 @@
         <div class="d-flex gap-1">
             @if(Auth::user()->role == 'admin')
             <a href="{{route('admin.profile')}}" class="logout-btn" title="Profile"><i class="bi bi-person fs-5"></i></a>
-            <a href="{{route('admin.logout')}}" class="logout-btn" title="Logout"><i class="bi bi-box-arrow-right fs-5"></i></a>
+            <form action="{{route('admin.logout')}}" method="POST" class="d-inline">
+                @csrf
+                <button type="submit" class="logout-btn" title="Logout"><i class="bi bi-box-arrow-right fs-5"></i></button>
+            </form>
             @else
             <a href="{{route('company.profile')}}" class="logout-btn" title="Profile"><i class="bi bi-person fs-5"></i></a>
-            <a href="{{route('company.logout')}}" class="logout-btn" title="Logout"><i class="bi bi-box-arrow-right fs-5"></i></a>
+            <form action="{{route('company.logout')}}" method="POST" class="d-inline">
+                @csrf
+                <button type="submit" class="logout-btn" title="Logout"><i class="bi bi-box-arrow-right fs-5"></i></button>
+            </form>
             @endif
         </div>
     </div>

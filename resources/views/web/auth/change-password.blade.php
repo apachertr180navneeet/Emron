@@ -8,6 +8,7 @@
     <div class="p-4">
         <form action="{{ route('company.password.update') }}" method="POST">
             @csrf
+            @method('PUT')
             <div class="row g-4">
                 <div class="col-md-6">
                     <label class="form-label">Current Password *</label>
@@ -22,8 +23,8 @@
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">Confirm New Password *</label>
-                    <input type="password" name="new_password_confirmation" class="form-control @error('new_password') is-invalid @enderror" placeholder="Confirm new password">
-                    @error('new_password')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                    <input type="password" name="new_password_confirmation" class="form-control @error('new_password_confirmation') is-invalid @enderror" placeholder="Confirm new password">
+                    @error('new_password_confirmation')<div class="invalid-feedback">{{ $message }}</div>@enderror
                 </div>
             </div>
             <div class="pt-4 border-top mt-4">

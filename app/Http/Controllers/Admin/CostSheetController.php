@@ -16,7 +16,6 @@ use App\Models\StockLedger;
 use App\Exports\CostSheetExport;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Maatwebsite\Excel\Facades\Excel;
-use Exception;
 
 class CostSheetController extends Controller
 {
@@ -57,8 +56,8 @@ class CostSheetController extends Controller
             }
 
             return view('admin.cost_sheet.index', compact('costSheets'));
-        } catch (Exception $e) {
-            return back()->with('error', $e->getMessage());
+        } catch (\Throwable $e) {
+            return back()->with('error', 'An error occurred.');
         }
     }
 
@@ -158,7 +157,7 @@ class CostSheetController extends Controller
                 'unit_name' => $unitName,
             ]);
         } catch (Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()]);
+            return response()->json(['success' => false, 'message' => 'An error occurred.']);
         }
     }
 
@@ -335,9 +334,9 @@ class CostSheetController extends Controller
                 : 'Cost sheet saved as draft.';
 
             return redirect()->route('admin.cost-sheet.index')->with('success', $msg);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             DB::rollBack();
-            return back()->with('error', $e->getMessage())->withInput();
+            return back()->with('error', 'An error occurred.')->withInput();
         }
     }
 
@@ -513,9 +512,9 @@ class CostSheetController extends Controller
             DB::commit();
 
             return redirect()->route('admin.cost-sheet.index')->with('success', 'Cost sheet updated successfully!');
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             DB::rollBack();
-            return back()->with('error', $e->getMessage())->withInput();
+            return back()->with('error', 'An error occurred.')->withInput();
         }
     }
 
@@ -526,26 +525,24 @@ class CostSheetController extends Controller
             DB::beginTransaction();
 
             if ($costSheet->status == 'Final') {
-                // Reverse stock deductions
+                // Collect ledger data before deletion for batch restoration
+                $manufacturingOutLedgers = StockLedger::where('reference_id', $costSheet->id)
+                    ->where('transaction_type', 'Manufacturing Out')
+                    ->get();
+
+                // Delete manufacturing ledger entries
                 StockLedger::where('reference_id', $costSheet->id)
                     ->whereIn('transaction_type', ['Manufacturing Out', 'Manufacturing In'])
                     ->delete();
 
-                $items = $costSheet->items;
-                foreach ($items as $item) {
-                    $consumedLedgers = StockLedger::where('reference_id', $costSheet->id)
-                        ->where('item_id', $item->raw_material_id)
-                        ->where('transaction_type', 'Manufacturing Out')
-                        ->get();
-
-                    foreach ($consumedLedgers as $entry) {
-                        if ($entry->batch_id) {
-                            $batch = PurchaseBatch::find($entry->batch_id);
-                            if ($batch) {
-                                $batch->consumed_qty -= $entry->qty_out;
-                                $batch->balance_qty += $entry->qty_out;
-                                $batch->save();
-                            }
+                // Restore batch balances from collected data
+                foreach ($manufacturingOutLedgers as $entry) {
+                    if ($entry->batch_id) {
+                        $batch = PurchaseBatch::find($entry->batch_id);
+                        if ($batch) {
+                            $batch->consumed_qty -= $entry->qty_out;
+                            $batch->balance_qty += $entry->qty_out;
+                            $batch->save();
                         }
                     }
                 }
@@ -557,9 +554,9 @@ class CostSheetController extends Controller
 
             DB::commit();
             return redirect()->route('admin.cost-sheet.index')->with('success', 'Cost sheet deleted successfully!');
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             DB::rollBack();
-            return back()->with('error', $e->getMessage());
+            return back()->with('error', 'An error occurred.');
         }
     }
 
@@ -646,6 +643,26 @@ class CostSheetController extends Controller
                     'balance_qty'      => $fgLedger + $costSheet->qty,
                     'transaction_date' => $costSheet->date,
                 ]);
+            } elseif ($newStatus == 'Draft') {
+                // Reverse stock deduction
+                $manufacturingOutLedgers = StockLedger::where('reference_id', $costSheet->id)
+                    ->where('transaction_type', 'Manufacturing Out')
+                    ->get();
+
+                StockLedger::where('reference_id', $costSheet->id)
+                    ->whereIn('transaction_type', ['Manufacturing Out', 'Manufacturing In'])
+                    ->delete();
+
+                foreach ($manufacturingOutLedgers as $entry) {
+                    if ($entry->batch_id) {
+                        $batch = PurchaseBatch::find($entry->batch_id);
+                        if ($batch) {
+                            $batch->consumed_qty -= $entry->qty_out;
+                            $batch->balance_qty += $entry->qty_out;
+                            $batch->save();
+                        }
+                    }
+                }
             }
 
             $costSheet->status = $newStatus;
@@ -653,9 +670,9 @@ class CostSheetController extends Controller
 
             DB::commit();
             return response()->json(['success' => true, 'status' => $costSheet->status]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             DB::rollBack();
-            return response()->json(['success' => false, 'message' => $e->getMessage()]);
+            return response()->json(['success' => false, 'message' => 'An error occurred.']);
         }
     }
 

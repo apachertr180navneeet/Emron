@@ -39,6 +39,11 @@ class Manufacturing extends Model
         return $this->hasMany(ManufacturingDetail::class);
     }
 
+    public function creator(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
     public function scopeForCompany($query)
     {
         $user = Auth::user();

@@ -20,8 +20,6 @@ class Company extends Model
         'state',
         'pin_code',
         'logo',
-        'username',
-        'password',
         'status',
         'created_by',
     ];

@@ -30,7 +30,7 @@ use Illuminate\Support\Facades\Artisan;
 */
 
 
-Route::get('/', [HomeController::class, 'index'])->name('/');
+Route::get('/', [HomeController::class, 'index'])->name('homepage');
 Route::get('/home', [HomeController::class, 'index'])->name('home');
 
 Route::name('admin.')->prefix('admin')->group(function () {
@@ -38,7 +38,7 @@ Route::name('admin.')->prefix('admin')->group(function () {
 
     Route::get('login', [AdminAuthController::class, 'login'])->name('login');
 
-    Route::post('login', [AdminAuthController::class, 'postLogin'])->name('login.post');
+    Route::post('login', [AdminAuthController::class, 'postLogin'])->name('login.post')->middleware('throttle:5,1');
 
     Route::middleware(['admin'])->group(function () {
     	Route::get('dashboard', [AdminAuthController::class, 'adminDashboard'])->name('dashboard');
@@ -47,7 +47,7 @@ Route::name('admin.')->prefix('admin')->group(function () {
 
         Route::post('update-password', [AdminAuthController::class, 'updatePassword'])->name('update.password');
 
-        Route::get('logout', [AdminAuthController::class, 'logout'])->name('logout');
+        Route::post('logout', [AdminAuthController::class, 'logout'])->name('logout');
 
         Route::get('profile', [AdminAuthController::class, 'adminProfile'])->name('profile');
 
@@ -57,7 +57,7 @@ Route::name('admin.')->prefix('admin')->group(function () {
         Route::get('company/create', [CompanyController::class, 'create'])->name('company.create');
         Route::post('company', [CompanyController::class, 'store'])->name('company.store');
         Route::get('company/{company}/edit', [CompanyController::class, 'edit'])->name('company.edit');
-        Route::any('company/{company}/update', [CompanyController::class, 'update'])->name('company.update');
+        Route::post('company/{company}/update', [CompanyController::class, 'update'])->name('company.update');
         Route::post('company/{company}/toggle-status', [CompanyController::class, 'toggleStatus'])->name('company.toggle');
 
     });
@@ -69,35 +69,35 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::get('vendor/create', [VendorController::class, 'create'])->name('vendor.create');
     Route::post('vendor', [VendorController::class, 'store'])->name('vendor.store');
     Route::get('vendor/{vendor}/edit', [VendorController::class, 'edit'])->name('vendor.edit');
-    Route::any('vendor/{vendor}/update', [VendorController::class, 'update'])->name('vendor.update');
+    Route::post('vendor/{vendor}/update', [VendorController::class, 'update'])->name('vendor.update');
     Route::post('vendor/{vendor}/toggle-status', [VendorController::class, 'toggleStatus'])->name('vendor.toggle');
     Route::delete('vendor/{vendor}', [VendorController::class, 'destroy'])->name('vendor.destroy');
     Route::get('customer', [CustomerController::class, 'index'])->name('customer.index');
     Route::get('customer/create', [CustomerController::class, 'create'])->name('customer.create');
     Route::post('customer', [CustomerController::class, 'store'])->name('customer.store');
     Route::get('customer/{customer}/edit', [CustomerController::class, 'edit'])->name('customer.edit');
-    Route::any('customer/{customer}/update', [CustomerController::class, 'update'])->name('customer.update');
+    Route::post('customer/{customer}/update', [CustomerController::class, 'update'])->name('customer.update');
     Route::post('customer/{customer}/toggle-status', [CustomerController::class, 'toggleStatus'])->name('customer.toggle');
     Route::delete('customer/{customer}', [CustomerController::class, 'destroy'])->name('customer.destroy');
     Route::get('salesman', [SalesmanController::class, 'index'])->name('salesman.index');
     Route::get('salesman/create', [SalesmanController::class, 'create'])->name('salesman.create');
     Route::post('salesman', [SalesmanController::class, 'store'])->name('salesman.store');
     Route::get('salesman/{salesman}/edit', [SalesmanController::class, 'edit'])->name('salesman.edit');
-    Route::any('salesman/{salesman}/update', [SalesmanController::class, 'update'])->name('salesman.update');
+    Route::post('salesman/{salesman}/update', [SalesmanController::class, 'update'])->name('salesman.update');
     Route::post('salesman/{salesman}/toggle-status', [SalesmanController::class, 'toggleStatus'])->name('salesman.toggle');
     Route::delete('salesman/{salesman}', [SalesmanController::class, 'destroy'])->name('salesman.destroy');
     Route::get('item', [ItemController::class, 'index'])->name('item.index');
     Route::get('item/create', [ItemController::class, 'create'])->name('item.create');
     Route::post('item', [ItemController::class, 'store'])->name('item.store');
     Route::get('item/{item}/edit', [ItemController::class, 'edit'])->name('item.edit');
-    Route::any('item/{item}/update', [ItemController::class, 'update'])->name('item.update');
+    Route::post('item/{item}/update', [ItemController::class, 'update'])->name('item.update');
     Route::post('item/{item}/toggle-status', [ItemController::class, 'toggleStatus'])->name('item.toggle');
     Route::delete('item/{item}', [ItemController::class, 'destroy'])->name('item.destroy');
     Route::get('unit', [UnitController::class, 'index'])->name('unit.index');
     Route::get('unit/create', [UnitController::class, 'create'])->name('unit.create');
     Route::post('unit', [UnitController::class, 'store'])->name('unit.store');
     Route::get('unit/{unit}/edit', [UnitController::class, 'edit'])->name('unit.edit');
-    Route::any('unit/{unit}/update', [UnitController::class, 'update'])->name('unit.update');
+    Route::post('unit/{unit}/update', [UnitController::class, 'update'])->name('unit.update');
     Route::post('unit/{unit}/toggle-status', [UnitController::class, 'toggleStatus'])->name('unit.toggle');
     Route::delete('unit/{unit}', [UnitController::class, 'destroy'])->name('unit.destroy');
     Route::get('item-assignment', [ItemAssignmentController::class, 'index'])->name('item-assignment.index');
@@ -109,21 +109,21 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::get('purchase/create', [PurchaseController::class, 'create'])->name('purchase.create');
     Route::post('purchase', [PurchaseController::class, 'store'])->name('purchase.store');
     Route::get('purchase/{purchase}/edit', [PurchaseController::class, 'edit'])->name('purchase.edit');
-    Route::any('purchase/{purchase}/update', [PurchaseController::class, 'update'])->name('purchase.update');
+    Route::post('purchase/{purchase}/update', [PurchaseController::class, 'update'])->name('purchase.update');
     Route::post('purchase/{purchase}/toggle-status', [PurchaseController::class, 'toggleStatus'])->name('purchase.toggle');
     Route::delete('purchase/{purchase}', [PurchaseController::class, 'destroy'])->name('purchase.destroy');
     Route::get('expense', [ExpenseController::class, 'index'])->name('expense.index');
     Route::get('expense/create', [ExpenseController::class, 'create'])->name('expense.create');
     Route::post('expense', [ExpenseController::class, 'store'])->name('expense.store');
     Route::get('expense/{expense}/edit', [ExpenseController::class, 'edit'])->name('expense.edit');
-    Route::any('expense/{expense}/update', [ExpenseController::class, 'update'])->name('expense.update');
+    Route::post('expense/{expense}/update', [ExpenseController::class, 'update'])->name('expense.update');
     Route::post('expense/{expense}/toggle-status', [ExpenseController::class, 'toggleStatus'])->name('expense.toggle');
     Route::delete('expense/{expense}', [ExpenseController::class, 'destroy'])->name('expense.destroy');
     Route::get('dispatch', [DispatchController::class, 'index'])->name('dispatch.index');
     Route::get('dispatch/create', [DispatchController::class, 'create'])->name('dispatch.create');
     Route::post('dispatch', [DispatchController::class, 'store'])->name('dispatch.store');
     Route::get('dispatch/{dispatchOrder}/edit', [DispatchController::class, 'edit'])->name('dispatch.edit');
-    Route::any('dispatch/{dispatchOrder}/update', [DispatchController::class, 'update'])->name('dispatch.update');
+    Route::post('dispatch/{dispatchOrder}/update', [DispatchController::class, 'update'])->name('dispatch.update');
     Route::delete('dispatch/{dispatchOrder}', [DispatchController::class, 'destroy'])->name('dispatch.destroy');
     Route::get('dispatch-reports', [DispatchController::class, 'reports'])->name('dispatch.reports');
     Route::get('manufacturing', [ManufacturingController::class, 'index'])->name('manufacturing.index');
@@ -139,7 +139,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::post('cost-sheet', [CostSheetController::class, 'store'])->name('cost-sheet.store');
     Route::post('cost-sheet/get-bom', [CostSheetController::class, 'getBom'])->name('cost-sheet.get-bom');
     Route::get('cost-sheet/{costSheet}/edit', [CostSheetController::class, 'edit'])->name('cost-sheet.edit');
-    Route::any('cost-sheet/{costSheet}/update', [CostSheetController::class, 'update'])->name('cost-sheet.update');
+    Route::post('cost-sheet/{costSheet}/update', [CostSheetController::class, 'update'])->name('cost-sheet.update');
     Route::get('cost-sheet/{costSheet}', [CostSheetController::class, 'show'])->name('cost-sheet.show');
     Route::delete('cost-sheet/{costSheet}', [CostSheetController::class, 'destroy'])->name('cost-sheet.destroy');
     Route::post('cost-sheet/{costSheet}/toggle-status', [CostSheetController::class, 'toggleStatus'])->name('cost-sheet.toggle');
@@ -156,19 +156,11 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::delete('stock-reconciliation/{stockReconciliation}', [StockReconciliationController::class, 'destroy'])->name('stock-reconciliation.destroy');
     Route::post('stock-reconciliation/{stockReconciliation}/toggle-status', [StockReconciliationController::class, 'toggleStatus'])->name('stock-reconciliation.toggle');
 
-    Route::get('run-migration', function () {
-        try {
-            Artisan::call('migrate', ['--force' => true]);
-            return response(Artisan::output());
-        } catch (\Throwable $e) {
-            return response('Migration failed: ' . $e->getMessage(), 500);
-        }
-    })->name('run.migration');
 });
 
 Route::name('company.')->group(function () {
     Route::get('company/login', [App\Http\Controllers\Web\CompanyAuthController::class, 'login'])->name('login');
-    Route::post('company/login', [App\Http\Controllers\Web\CompanyAuthController::class, 'postLogin'])->name('login.post');
+    Route::post('company/login', [App\Http\Controllers\Web\CompanyAuthController::class, 'postLogin'])->name('login.post')->middleware('throttle:5,1');
 });
 
 Route::middleware(['user'])->group(function () {
@@ -177,8 +169,18 @@ Route::middleware(['user'])->group(function () {
     Route::post('company/profile', [App\Http\Controllers\Web\CompanyAuthController::class, 'updateProfile'])->name('company.profile.update');
     Route::get('company/change-password', [App\Http\Controllers\Web\CompanyAuthController::class, 'changePassword'])->name('company.change.password');
     Route::post('company/update-password', [App\Http\Controllers\Web\CompanyAuthController::class, 'updatePassword'])->name('company.password.update');
-    Route::get('company/logout', [App\Http\Controllers\Web\CompanyAuthController::class, 'logout'])->name('company.logout');
+    Route::post('company/logout', [App\Http\Controllers\Web\CompanyAuthController::class, 'logout'])->name('company.logout');
 });
+
+
+Route::get('run-migration', function () {
+        try {
+            Artisan::call('migrate', ['--force' => true]);
+            return response(Artisan::output());
+        } catch (\Throwable $e) {
+            return response('Migration failed: ' . $e->getMessage(), 500);
+        }
+    })->name('run.migration');
 
 
 

@@ -11,6 +11,7 @@
     <div class="p-4">
         <form action="{{ route('admin.company.update', $company->id) }}" method="POST" enctype="multipart/form-data">
             @csrf
+            @method('PUT')
             <div class="row g-4">
                 <div class="col-md-6">
                     <div class="mb-3">

@@ -11,6 +11,7 @@
     <div class="p-4">
         <form action="{{ route('admin.expense.update', $expense->id) }}" method="POST">
             @csrf
+            @method('PUT')
             <div class="row g-4">
                 <div class="col-md-6">
                     <label class="form-label">Expense Name <span class="text-danger">*</span></label>

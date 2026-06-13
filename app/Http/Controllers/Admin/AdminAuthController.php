@@ -26,8 +26,8 @@ class AdminAuthController extends Controller
             }
 
         }
-        catch(Exception $e){
-            return back()->with("error",$e->getMessage());
+        catch(\Throwable $e){
+            return back()->with("error", 'An error occurred');
         }
     }
 
@@ -48,13 +48,7 @@ class AdminAuthController extends Controller
             $user = User::where('role','admin')->where('email',$request->email)->first();
             if($user){
                 $credentials = $request->only("email", "password");
-                if(Auth::attempt([
-                        'email' => $request->email,
-                        'password' => $request->password,
-                        'role' => function ($query) {
-                            $query->where('role','admin');
-                        }
-                    ]))
+                if(Auth::attempt($credentials))
                 {
                     return redirect()->route("admin.dashboard")->with("success", "Welcome to your dashboard.");
                 }
@@ -64,8 +58,8 @@ class AdminAuthController extends Controller
             }
 
         }
-        catch(Exception $e){
-            return back()->with("error",$e->getMessage());
+        catch(\Throwable $e){
+            return back()->with("error", 'An error occurred');
         }
     }
 
@@ -91,8 +85,8 @@ class AdminAuthController extends Controller
             ]);
             return back()->with("success", "Password changed successfully!");
         }
-        catch(Exception $e){
-            return back()->with("error",$e->getMessage());
+        catch(\Throwable $e){
+            return back()->with("error", 'An error occurred');
         }
     }
 
@@ -101,12 +95,13 @@ class AdminAuthController extends Controller
     public function logout()
     {
         try{
-            Session::flush();
             Auth::logout();
+            session()->invalidate();
+            session()->regenerateToken();
             return redirect()->route("admin.login")->withSuccess('Logout Successful!');
         }
-        catch(Exception $e){
-            return back()->with("error",$e->getMessage());
+        catch(\Throwable $e){
+            return back()->with("error", 'An error occurred');
         }
     }
 
@@ -117,8 +112,8 @@ class AdminAuthController extends Controller
             return view("admin.auth.profile", compact("user"));
 
         }
-        catch(Exception $e){
-            return back()->with("error",$e->getMessage());
+        catch(\Throwable $e){
+            return back()->with("error", 'An error occurred');
         }
     }
 
@@ -127,7 +122,7 @@ class AdminAuthController extends Controller
         try
         {
             $user = Auth::user();
-            $data = $request->all();
+            $data = $request->only(['first_name', 'last_name', 'phone', 'email']);
             $validator = Validator::make($data,[
                 "first_name" => "required",
                 "last_name" => "required",
@@ -159,8 +154,8 @@ class AdminAuthController extends Controller
             $user->save();
             return redirect()->back()->with("success", "Profile update successfully!");
         }
-        catch (Exception $e) {
-            return redirect()->back()->with("error", $e->getMessage());
+        catch (\Throwable $e) {
+            return redirect()->back()->with("error", 'An error occurred');
         }
     }
 

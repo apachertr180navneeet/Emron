@@ -13,7 +13,7 @@
     <tbody>
         @forelse($reports as $item)
         <tr>
-            <td class="px-4">{{ $item->costSheet->date->format('d-m-Y') ?? '—' }}</td>
+            <td class="px-4">{{ $item->costSheet?->date?->format('d-m-Y') ?? '—' }}</td>
             <td class="px-4 fw-bold text-dark">{{ $item->costSheet->bom_no ?? '—' }}</td>
             <td class="px-4">{{ $item->costSheet->product->item_name ?? '—' }}</td>
             <td class="px-4">{{ $item->rawMaterial->item_name ?? '—' }}</td>

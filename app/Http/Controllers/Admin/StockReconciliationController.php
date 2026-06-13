@@ -11,7 +11,6 @@ use App\Models\StockReconciliationItem;
 use App\Models\Item;
 use App\Models\PurchaseBatch;
 use App\Models\StockLedger;
-use Exception;
 
 class StockReconciliationController extends Controller
 {
@@ -98,8 +97,8 @@ class StockReconciliationController extends Controller
                 'system_qty' => $systemQty,
                 'rate' => $rate,
             ]);
-        } catch (Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()]);
+        } catch (\Throwable $e) {
+            return response()->json(['success' => false, 'message' => 'An error occurred.']);
         }
     }
 
@@ -108,6 +107,7 @@ class StockReconciliationController extends Controller
         $request->validate([
             'reconciliation_date' => 'required|date',
             'reference_no'       => 'required|max:255|unique:stock_reconciliations,reference_no',
+            'status'             => 'required|in:Draft,Posted',
         ]);
 
         $companyId = $this->getCompanyId();
@@ -153,9 +153,9 @@ class StockReconciliationController extends Controller
                 : 'Reconciliation saved as draft.';
 
             return redirect()->route('admin.stock-reconciliation.index')->with('success', $msg);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             DB::rollBack();
-            return back()->with('error', $e->getMessage())->withInput();
+            return back()->with('error', 'An error occurred.')->withInput();
         }
     }
 
@@ -182,6 +182,16 @@ class StockReconciliationController extends Controller
                     'qty_out'          => 0,
                     'balance_qty'      => $lastLedger + $diff,
                     'transaction_date' => $reconciliation->reconciliation_date,
+                ]);
+
+                PurchaseBatch::create([
+                    'company_id'   => $companyId,
+                    'purchase_id'  => null,
+                    'item_id'      => $item->item_id,
+                    'received_qty' => $diff,
+                    'consumed_qty' => 0,
+                    'balance_qty'  => $diff,
+                    'purchase_date'=> $reconciliation->reconciliation_date,
                 ]);
             } else {
                 // Shortage - consume from FIFO batches
@@ -242,31 +252,49 @@ class StockReconciliationController extends Controller
             DB::beginTransaction();
 
             if ($stockReconciliation->status == 'Posted') {
-                // Reverse stock adjustments
+                $stockReconciliation->load('items');
+
+                // Collect data for positive differences before deleting ledgers
+                $positiveDifferences = [];
+                foreach ($stockReconciliation->items as $item) {
+                    if ($item->difference_qty > 0) {
+                        $positiveDifferences[] = [
+                            'item_id' => $item->item_id,
+                            'qty' => $item->difference_qty,
+                        ];
+                    }
+                }
+
+                // Collect ledger data for batch restoration (negative diffs)
+                $outLedgersData = StockLedger::where('reference_id', $stockReconciliation->id)
+                    ->where('transaction_type', 'Reconciliation Out')
+                    ->get();
+
+                // Delete all reconciliation ledger entries
                 StockLedger::where('reference_id', $stockReconciliation->id)
                     ->whereIn('transaction_type', ['Reconciliation In', 'Reconciliation Out'])
                     ->delete();
 
-                foreach ($stockReconciliation->items as $item) {
-                    if ($item->difference_qty < 0) {
-                        // Restore consumed batches
-                        $reversalQty = abs($item->difference_qty);
-                        $outLedgers = StockLedger::where('reference_id', $stockReconciliation->id)
-                            ->where('item_id', $item->item_id)
-                            ->where('transaction_type', 'Reconciliation Out')
-                            ->get();
-
-                        foreach ($outLedgers as $entry) {
-                            if ($entry->batch_id) {
-                                $batch = PurchaseBatch::find($entry->batch_id);
-                                if ($batch) {
-                                    $batch->consumed_qty -= $entry->qty_out;
-                                    $batch->balance_qty += $entry->qty_out;
-                                    $batch->save();
-                                }
-                            }
+                // Restore batch balances from collected data
+                foreach ($outLedgersData as $entry) {
+                    if ($entry->batch_id) {
+                        $batch = PurchaseBatch::find($entry->batch_id);
+                        if ($batch) {
+                            $batch->consumed_qty -= $entry->qty_out;
+                            $batch->balance_qty += $entry->qty_out;
+                            $batch->save();
                         }
                     }
+                }
+
+                // Remove PurchaseBatch entries created for positive differences
+                foreach ($positiveDifferences as $pd) {
+                    PurchaseBatch::where('item_id', $pd['item_id'])
+                        ->where('company_id', $stockReconciliation->company_id)
+                        ->where('purchase_id', null)
+                        ->where('received_qty', $pd['qty'])
+                        ->where('balance_qty', $pd['qty'])
+                        ->delete();
                 }
             }
 
@@ -275,9 +303,9 @@ class StockReconciliationController extends Controller
 
             DB::commit();
             return redirect()->route('admin.stock-reconciliation.index')->with('success', 'Reconciliation deleted successfully!');
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             DB::rollBack();
-            return back()->with('error', $e->getMessage());
+            return back()->with('error', 'An error occurred.');
         }
     }
 
@@ -300,7 +328,7 @@ class StockReconciliationController extends Controller
             return response()->json(['success' => true, 'status' => $stockReconciliation->status]);
         } catch (Exception $e) {
             DB::rollBack();
-            return response()->json(['success' => false, 'message' => $e->getMessage()]);
+            return response()->json(['success' => false, 'message' => 'An error occurred.']);
         }
     }
 

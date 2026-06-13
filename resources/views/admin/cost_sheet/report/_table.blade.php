@@ -1,3 +1,4 @@
+{{-- TODO: $reports is a paginated collection — sums below are per-page only. Pass $totals from controller for full sums across all pages. --}}
 @php
 $totalMaterial = $reports->sum('raw_material_cost');
 $totalExpense = $reports->sum('expense_cost');

@@ -38,8 +38,8 @@ class UnitController extends Controller
             }
 
             return view('admin.unit.index', compact('units'));
-        } catch (Exception $e) {
-            return back()->with('error', $e->getMessage());
+        } catch (\Throwable $e) {
+            return back()->with('error', 'An error occurred');
         }
     }
 
@@ -57,7 +57,7 @@ class UnitController extends Controller
         ]);
 
         try {
-            $data = $request->all();
+            $data = $request->only(['unit_name', 'sub_unit', 'subunit_value']);
             $data['company_id'] = $this->getCompanyId();
             $data['created_by'] = Auth::id();
             $data['status'] = 'active';
@@ -65,8 +65,8 @@ class UnitController extends Controller
             Unit::create($data);
 
             return redirect()->route('admin.unit.index')->with('success', 'Unit created successfully!');
-        } catch (Exception $e) {
-            return back()->with('error', $e->getMessage());
+        } catch (\Throwable $e) {
+            return back()->with('error', 'An error occurred');
         }
     }
 
@@ -86,12 +86,12 @@ class UnitController extends Controller
         ]);
 
         try {
-            $data = $request->all();
+            $data = $request->only(['unit_name', 'sub_unit', 'subunit_value']);
             $unit->update($data);
 
             return redirect()->route('admin.unit.index')->with('success', 'Unit updated successfully!');
-        } catch (Exception $e) {
-            return back()->with('error', $e->getMessage());
+        } catch (\Throwable $e) {
+            return back()->with('error', 'An error occurred');
         }
     }
 
@@ -102,8 +102,8 @@ class UnitController extends Controller
             $unit->status = $unit->status === 'active' ? 'inactive' : 'active';
             $unit->save();
             return response()->json(['success' => true, 'status' => $unit->status]);
-        } catch (Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()]);
+        } catch (\Throwable $e) {
+            return response()->json(['success' => false, 'message' => 'An error occurred']);
         }
     }
 
@@ -113,8 +113,8 @@ class UnitController extends Controller
         try {
             $unit->delete();
             return redirect()->route('admin.unit.index')->with('success', 'Unit deleted successfully!');
-        } catch (Exception $e) {
-            return back()->with('error', $e->getMessage());
+        } catch (\Throwable $e) {
+            return back()->with('error', 'An error occurred');
         }
     }
 

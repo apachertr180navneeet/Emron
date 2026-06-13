@@ -21,7 +21,7 @@
                     </li>
                     @endif
                     <li class="nav-item ms-lg-2">
-                        <a class="btn btn-sm px-4 rounded-3 fw-semibold" href="{{ route('admin.logout') }}" style="background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;border:none;box-shadow:0 4px 12px rgba(79,70,229,.3)">Logout</a>
+                        <form action="{{ route('company.logout') }}" method="POST" class="d-inline">@csrf<button type="submit" class="btn btn-sm px-4 rounded-3 fw-semibold" style="background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;border:none;box-shadow:0 4px 12px rgba(79,70,229,.3)">Logout</button></form>
                     </li>
                 @else
                     <li class="nav-item ms-lg-2">

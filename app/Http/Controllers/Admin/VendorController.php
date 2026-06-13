@@ -44,8 +44,8 @@ class VendorController extends Controller
             }
 
             return view('admin.vendor.index', compact('vendors'));
-        } catch (Exception $e) {
-            return back()->with('error', $e->getMessage());
+        } catch (\Throwable $e) {
+            return back()->with('error', 'An error occurred');
         }
     }
 
@@ -68,7 +68,7 @@ class VendorController extends Controller
         ]);
 
         try {
-            $data = $request->all();
+            $data = $request->only(['vendor_name', 'firm_name', 'mobile', 'email', 'address', 'city', 'pin_code', 'state', 'gst_no', 'contact_person']);
             $data['company_id'] = $this->getCompanyId();
             $data['created_by'] = Auth::id();
             $data['status'] = 'active';
@@ -76,8 +76,8 @@ class VendorController extends Controller
             Vendor::create($data);
 
             return redirect()->route('admin.vendor.index')->with('success', 'Vendor created successfully!');
-        } catch (Exception $e) {
-            return back()->with('error', $e->getMessage());
+        } catch (\Throwable $e) {
+            return back()->with('error', 'An error occurred');
         }
     }
 
@@ -102,12 +102,12 @@ class VendorController extends Controller
         ]);
 
         try {
-            $data = $request->all();
+            $data = $request->only(['vendor_name', 'firm_name', 'mobile', 'email', 'address', 'city', 'pin_code', 'state', 'gst_no', 'contact_person']);
             $vendor->update($data);
 
             return redirect()->route('admin.vendor.index')->with('success', 'Vendor updated successfully!');
-        } catch (Exception $e) {
-            return back()->with('error', $e->getMessage());
+        } catch (\Throwable $e) {
+            return back()->with('error', 'An error occurred');
         }
     }
 
@@ -118,8 +118,8 @@ class VendorController extends Controller
             $vendor->status = $vendor->status === 'active' ? 'inactive' : 'active';
             $vendor->save();
             return response()->json(['success' => true, 'status' => $vendor->status]);
-        } catch (Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()]);
+        } catch (\Throwable $e) {
+            return response()->json(['success' => false, 'message' => 'An error occurred']);
         }
     }
 
@@ -129,8 +129,8 @@ class VendorController extends Controller
         try {
             $vendor->delete();
             return redirect()->route('admin.vendor.index')->with('success', 'Vendor deleted successfully!');
-        } catch (Exception $e) {
-            return back()->with('error', $e->getMessage());
+        } catch (\Throwable $e) {
+            return back()->with('error', 'An error occurred');
         }
     }
 

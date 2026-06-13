@@ -16,7 +16,6 @@ class User extends Authenticatable
         'company_id',
         'first_name',
         'last_name',
-        'full_name',
         'username',
         'slug',
         'email',
@@ -59,6 +58,11 @@ class User extends Authenticatable
         }else{
             return "";
         }
+    }
+
+    public function company(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Company::class);
     }
 
 }

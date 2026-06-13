@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use App\Models\Purchase;
 use App\Models\PurchaseItem;
 use App\Models\PurchaseBatch;
@@ -12,7 +13,6 @@ use App\Models\StockLedger;
 use App\Models\Vendor;
 use App\Models\Item;
 use App\Models\Unit;
-use Exception;
 
 class PurchaseController extends Controller
 {
@@ -51,8 +51,8 @@ class PurchaseController extends Controller
             }
 
             return view('admin.purchase.index', compact('purchases'));
-        } catch (Exception $e) {
-            return back()->with('error', $e->getMessage());
+        } catch (\Throwable $e) {
+            return back()->with('error', 'An error occurred.');
         }
     }
 
@@ -93,6 +93,7 @@ class PurchaseController extends Controller
         ]);
 
         try {
+            DB::beginTransaction();
             $subtotal = $request->subtotal;
             $gst = $request->gst_percentage;
             $taxAmount = $subtotal * ($gst / 100);
@@ -166,9 +167,11 @@ class PurchaseController extends Controller
                 }
             }
 
+            DB::commit();
             return redirect()->route('admin.purchase.index')->with('success', 'Purchase created successfully!');
-        } catch (Exception $e) {
-            return back()->with('error', $e->getMessage())->withInput();
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            return back()->with('error', 'An error occurred.')->withInput();
         }
     }
 
@@ -214,6 +217,7 @@ class PurchaseController extends Controller
         ]);
 
         try {
+            DB::beginTransaction();
             $subtotal = $request->subtotal;
             $gst = $request->gst_percentage;
             $taxAmount = $subtotal * ($gst / 100);
@@ -240,6 +244,8 @@ class PurchaseController extends Controller
                 'notes'             => $request->notes,
             ]);
 
+            PurchaseBatch::where('purchase_id', $purchase->id)->delete();
+            StockLedger::where('reference_id', $purchase->id)->where('transaction_type', 'Purchase')->delete();
             $purchase->items()->delete();
 
             foreach ($request->items as $item) {
@@ -254,9 +260,11 @@ class PurchaseController extends Controller
                 ]);
             }
 
+            DB::commit();
             return redirect()->route('admin.purchase.index')->with('success', 'Purchase updated successfully!');
-        } catch (Exception $e) {
-            return back()->with('error', $e->getMessage())->withInput();
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            return back()->with('error', 'An error occurred.')->withInput();
         }
     }
 
@@ -267,8 +275,8 @@ class PurchaseController extends Controller
             $purchase->status = $purchase->status === 'active' ? 'inactive' : 'active';
             $purchase->save();
             return response()->json(['success' => true, 'status' => $purchase->status]);
-        } catch (Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()]);
+        } catch (\Throwable $e) {
+            return response()->json(['success' => false, 'message' => 'An error occurred.']);
         }
     }
 
@@ -276,11 +284,16 @@ class PurchaseController extends Controller
     {
         $this->authorizeAccess($purchase);
         try {
+            DB::beginTransaction();
+            PurchaseBatch::where('purchase_id', $purchase->id)->delete();
+            StockLedger::where('reference_id', $purchase->id)->where('transaction_type', 'Purchase')->delete();
             $purchase->items()->delete();
             $purchase->delete();
+            DB::commit();
             return redirect()->route('admin.purchase.index')->with('success', 'Purchase deleted successfully!');
-        } catch (Exception $e) {
-            return back()->with('error', $e->getMessage());
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            return back()->with('error', 'An error occurred.');
         }
     }
 

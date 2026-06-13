@@ -26,7 +26,7 @@ class ItemAssignmentController extends Controller
 
         if ($user->role === 'admin') {
             $companies = Company::where('status', 'active')->orderBy('company_name')->get();
-            $currentCompanyId = $companies->first()->id ?? null;
+            $currentCompanyId = $companies->isNotEmpty() ? $companies->first()->id : null;
         } else {
             $currentCompanyId = $user->company_id;
         }
@@ -187,8 +187,8 @@ class ItemAssignmentController extends Controller
             }
 
             return response()->json(['success' => true]);
-        } catch (Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        } catch (\Throwable $e) {
+            return response()->json(['success' => false, 'message' => 'An error occurred'], 500);
         }
     }
 
@@ -199,8 +199,8 @@ class ItemAssignmentController extends Controller
             $itemAssignment->status = $itemAssignment->status === 'active' ? 'inactive' : 'active';
             $itemAssignment->save();
             return response()->json(['success' => true, 'status' => $itemAssignment->status]);
-        } catch (Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()]);
+        } catch (\Throwable $e) {
+            return response()->json(['success' => false, 'message' => 'An error occurred']);
         }
     }
 
@@ -210,8 +210,8 @@ class ItemAssignmentController extends Controller
         try {
             $itemAssignment->delete();
             return redirect()->route('admin.item-assignment.index')->with('success', 'Item assignment deleted successfully!');
-        } catch (Exception $e) {
-            return back()->with('error', $e->getMessage());
+        } catch (\Throwable $e) {
+            return back()->with('error', 'An error occurred');
         }
     }
 

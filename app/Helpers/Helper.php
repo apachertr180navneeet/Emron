@@ -10,7 +10,7 @@ class Helper
 {
    
     public static function admin(){
-        $admin = User::where('id',1)->first();
+        $admin = User::where('id',1)->withTrashed()->first();
         return $admin;
     }
 
@@ -19,7 +19,7 @@ class Helper
         $slug = str_replace(' ', '-', $name);
         $slug = strtolower($slug);
         $i = 1;
-        while ($i > 0) {
+        while ($i > 0 && $i < 1000) {
             $check_slug = DB::table($table)->where('slug', $slug)->first();
             if($check_slug) {
                 $slug = str_replace(' ', '-', $name) . '-' . $i;
@@ -39,7 +39,7 @@ class Helper
         $slug = str_replace(' ', '-', $name);
         $slug = strtolower($slug);
         $i = 1;
-        while ($i > 0) {
+        while ($i > 0 && $i < 1000) {
             $check_slug = DB::table($table)->where('slug', $slug)->where('id','!=',$id)->first();
             if($check_slug) {
                 $slug = str_replace(' ', '-', $name) . '-' . $i;

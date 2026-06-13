@@ -4,7 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-use Auth;
+use Illuminate\Support\Facades\Auth;
 
 class UserMiddleware
 {
@@ -22,7 +22,7 @@ class UserMiddleware
             if($user->role == "user") {
                 return $next($request);
             }else{
-                return back()->with("error","Opps! You do not have access this");
+                return back()->with("error","Oops! You do not have access to this");
             }
         }else{
             return redirect()->route('company.login');

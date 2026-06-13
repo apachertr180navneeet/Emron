@@ -9,7 +9,6 @@ use App\Models\DispatchOrder;
 use App\Models\DispatchOrderItem;
 use App\Models\Customer;
 use App\Models\Item;
-use Exception;
 
 class DispatchController extends Controller
 {
@@ -51,8 +50,8 @@ class DispatchController extends Controller
             }
 
             return view('admin.dispatch.index', compact('dispatchOrders'));
-        } catch (Exception $e) {
-            return back()->with('error', $e->getMessage());
+        } catch (\Throwable $e) {
+            return back()->with('error', 'An error occurred.');
         }
     }
 
@@ -112,8 +111,8 @@ class DispatchController extends Controller
             }
 
             return redirect()->route('admin.dispatch.index')->with('success', 'Dispatch order created successfully!');
-        } catch (Exception $e) {
-            return back()->with('error', $e->getMessage())->withInput();
+        } catch (\Throwable $e) {
+            return back()->with('error', 'An error occurred.')->withInput();
         }
     }
 
@@ -175,8 +174,8 @@ class DispatchController extends Controller
             }
 
             return redirect()->route('admin.dispatch.index')->with('success', 'Dispatch order updated successfully!');
-        } catch (Exception $e) {
-            return back()->with('error', $e->getMessage())->withInput();
+        } catch (\Throwable $e) {
+            return back()->with('error', 'An error occurred.')->withInput();
         }
     }
 
@@ -187,8 +186,8 @@ class DispatchController extends Controller
             $dispatchOrder->items()->delete();
             $dispatchOrder->delete();
             return redirect()->route('admin.dispatch.index')->with('success', 'Dispatch order deleted successfully!');
-        } catch (Exception $e) {
-            return back()->with('error', $e->getMessage());
+        } catch (\Throwable $e) {
+            return back()->with('error', 'An error occurred.');
         }
     }
 
@@ -225,7 +224,7 @@ class DispatchController extends Controller
         }
 
         $reportType = $request->report_type ?? 'summary';
-        $dispatchOrders = $query->latest()->get();
+        $dispatchOrders = $query->latest()->paginate(50);
         $customers = Customer::forCompany($companyId)->where('status', 'active')->orderBy('customer_name')->get();
 
         // Aggregate data for different reports

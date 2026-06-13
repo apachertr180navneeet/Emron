@@ -21,7 +21,7 @@ class AdminMiddleware
             if($user->role == "admin") {
                 return $next($request);
             }else{
-                return redirect()->back();
+                return redirect()->back()->with('error', 'You do not have admin access');
             }
         }else{
             return redirect()->route('admin.login');

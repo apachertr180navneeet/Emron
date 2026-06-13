@@ -41,8 +41,8 @@ class ExpenseController extends Controller
             }
 
             return view('admin.expense.index', compact('expenses'));
-        } catch (Exception $e) {
-            return back()->with('error', $e->getMessage());
+        } catch (\Throwable $e) {
+            return back()->with('error', 'An error occurred');
         }
     }
 
@@ -59,7 +59,7 @@ class ExpenseController extends Controller
         ]);
 
         try {
-            $data = $request->all();
+            $data = $request->only(['expense_name', 'description']);
             $data['company_id'] = $this->getCompanyId();
             $data['created_by'] = Auth::id();
             $data['status'] = 'active';
@@ -67,8 +67,8 @@ class ExpenseController extends Controller
             Expense::create($data);
 
             return redirect()->route('admin.expense.index')->with('success', 'Expense created successfully!');
-        } catch (Exception $e) {
-            return back()->with('error', $e->getMessage());
+        } catch (\Throwable $e) {
+            return back()->with('error', 'An error occurred');
         }
     }
 
@@ -87,12 +87,12 @@ class ExpenseController extends Controller
         ]);
 
         try {
-            $data = $request->all();
+            $data = $request->only(['expense_name', 'description']);
             $expense->update($data);
 
             return redirect()->route('admin.expense.index')->with('success', 'Expense updated successfully!');
-        } catch (Exception $e) {
-            return back()->with('error', $e->getMessage());
+        } catch (\Throwable $e) {
+            return back()->with('error', 'An error occurred');
         }
     }
 
@@ -103,8 +103,8 @@ class ExpenseController extends Controller
             $expense->status = $expense->status === 'active' ? 'inactive' : 'active';
             $expense->save();
             return response()->json(['success' => true, 'status' => $expense->status]);
-        } catch (Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()]);
+        } catch (\Throwable $e) {
+            return response()->json(['success' => false, 'message' => 'An error occurred']);
         }
     }
 
@@ -114,8 +114,8 @@ class ExpenseController extends Controller
         try {
             $expense->delete();
             return redirect()->route('admin.expense.index')->with('success', 'Expense deleted successfully!');
-        } catch (Exception $e) {
-            return back()->with('error', $e->getMessage());
+        } catch (\Throwable $e) {
+            return back()->with('error', 'An error occurred');
         }
     }
 

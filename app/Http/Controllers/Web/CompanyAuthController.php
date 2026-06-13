@@ -35,8 +35,8 @@ class CompanyAuthController extends Controller
             }
 
             return back()->with('error', 'Invalid credentials or account inactive.');
-        } catch (Exception $e) {
-            return back()->with('error', $e->getMessage());
+        } catch (\Throwable $e) {
+            return back()->with('error', 'An error occurred');
         }
     }
 
@@ -84,8 +84,8 @@ class CompanyAuthController extends Controller
             $user->save();
 
             return redirect()->back()->with('success', 'Profile updated successfully!');
-        } catch (Exception $e) {
-            return redirect()->back()->with('error', $e->getMessage());
+        } catch (\Throwable $e) {
+            return redirect()->back()->with('error', 'An error occurred');
         }
     }
 
@@ -111,15 +111,16 @@ class CompanyAuthController extends Controller
             $user->save();
 
             return back()->with('success', 'Password changed successfully!');
-        } catch (Exception $e) {
-            return back()->with('error', $e->getMessage());
+        } catch (\Throwable $e) {
+            return back()->with('error', 'An error occurred');
         }
     }
 
     public function logout()
     {
-        Session::flush();
         Auth::logout();
+        session()->invalidate();
+        session()->regenerateToken();
         return redirect()->route('company.login')->withSuccess('Logout Successful!');
     }
 }

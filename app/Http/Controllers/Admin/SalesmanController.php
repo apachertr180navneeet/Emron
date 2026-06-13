@@ -43,8 +43,8 @@ class SalesmanController extends Controller
             }
 
             return view('admin.salesman.index', compact('salesmen'));
-        } catch (Exception $e) {
-            return back()->with('error', $e->getMessage());
+        } catch (\Throwable $e) {
+            return back()->with('error', 'An error occurred');
         }
     }
 
@@ -64,7 +64,7 @@ class SalesmanController extends Controller
         ]);
 
         try {
-            $data = $request->all();
+            $data = $request->only(['salesman_name', 'mobile', 'email', 'joining_date', 'city', 'address']);
             $data['company_id'] = $this->getCompanyId();
             $data['created_by'] = Auth::id();
             $data['status'] = 'active';
@@ -72,8 +72,8 @@ class SalesmanController extends Controller
             Salesman::create($data);
 
             return redirect()->route('admin.salesman.index')->with('success', 'Salesman created successfully!');
-        } catch (Exception $e) {
-            return back()->with('error', $e->getMessage());
+        } catch (\Throwable $e) {
+            return back()->with('error', 'An error occurred');
         }
     }
 
@@ -95,12 +95,12 @@ class SalesmanController extends Controller
         ]);
 
         try {
-            $data = $request->all();
+            $data = $request->only(['salesman_name', 'mobile', 'email', 'joining_date', 'city', 'address']);
             $salesman->update($data);
 
             return redirect()->route('admin.salesman.index')->with('success', 'Salesman updated successfully!');
-        } catch (Exception $e) {
-            return back()->with('error', $e->getMessage());
+        } catch (\Throwable $e) {
+            return back()->with('error', 'An error occurred');
         }
     }
 
@@ -111,8 +111,8 @@ class SalesmanController extends Controller
             $salesman->status = $salesman->status === 'active' ? 'inactive' : 'active';
             $salesman->save();
             return response()->json(['success' => true, 'status' => $salesman->status]);
-        } catch (Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()]);
+        } catch (\Throwable $e) {
+            return response()->json(['success' => false, 'message' => 'An error occurred']);
         }
     }
 
@@ -122,8 +122,8 @@ class SalesmanController extends Controller
         try {
             $salesman->delete();
             return redirect()->route('admin.salesman.index')->with('success', 'Salesman deleted successfully!');
-        } catch (Exception $e) {
-            return back()->with('error', $e->getMessage());
+        } catch (\Throwable $e) {
+            return back()->with('error', 'An error occurred');
         }
     }
 

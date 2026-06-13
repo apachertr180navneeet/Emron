@@ -11,6 +11,7 @@
     <div class="p-4">
         <form action="{{ route('admin.item.update', $item->id) }}" method="POST">
             @csrf
+            @method('PUT')
             <h6 class="fw-bold text-dark mb-3" style="font-size:.8125rem">Item Details</h6>
             <div class="row g-4">
                 <div class="col-md-4">

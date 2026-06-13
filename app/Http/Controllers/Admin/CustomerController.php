@@ -44,8 +44,8 @@ class CustomerController extends Controller
             }
 
             return view('admin.customer.index', compact('customers'));
-        } catch (Exception $e) {
-            return back()->with('error', $e->getMessage());
+        } catch (\Throwable $e) {
+            return back()->with('error', 'An error occurred');
         }
     }
 
@@ -64,7 +64,7 @@ class CustomerController extends Controller
         ]);
 
         try {
-            $data = $request->all();
+            $data = $request->only(['customer_name', 'firm_name', 'mobile', 'email', 'location', 'address', 'city', 'pin_code', 'state', 'gst_no']);
             $data['company_id'] = $this->getCompanyId();
             $data['created_by'] = Auth::id();
             $data['status'] = 'active';
@@ -72,8 +72,8 @@ class CustomerController extends Controller
             Customer::create($data);
 
             return redirect()->route('admin.customer.index')->with('success', 'Customer created successfully!');
-        } catch (Exception $e) {
-            return back()->with('error', $e->getMessage());
+        } catch (\Throwable $e) {
+            return back()->with('error', 'An error occurred');
         }
     }
 
@@ -94,12 +94,12 @@ class CustomerController extends Controller
         ]);
 
         try {
-            $data = $request->all();
+            $data = $request->only(['customer_name', 'firm_name', 'mobile', 'email', 'location', 'address', 'city', 'pin_code', 'state', 'gst_no']);
             $customer->update($data);
 
             return redirect()->route('admin.customer.index')->with('success', 'Customer updated successfully!');
-        } catch (Exception $e) {
-            return back()->with('error', $e->getMessage());
+        } catch (\Throwable $e) {
+            return back()->with('error', 'An error occurred');
         }
     }
 
@@ -110,8 +110,8 @@ class CustomerController extends Controller
             $customer->status = $customer->status === 'active' ? 'inactive' : 'active';
             $customer->save();
             return response()->json(['success' => true, 'status' => $customer->status]);
-        } catch (Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()]);
+        } catch (\Throwable $e) {
+            return response()->json(['success' => false, 'message' => 'An error occurred']);
         }
     }
 
@@ -121,8 +121,8 @@ class CustomerController extends Controller
         try {
             $customer->delete();
             return redirect()->route('admin.customer.index')->with('success', 'Customer deleted successfully!');
-        } catch (Exception $e) {
-            return back()->with('error', $e->getMessage());
+        } catch (\Throwable $e) {
+            return back()->with('error', 'An error occurred');
         }
     }
 

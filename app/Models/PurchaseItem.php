@@ -26,4 +26,9 @@ class PurchaseItem extends Model
     {
         return $this->belongsTo(Item::class);
     }
+
+    public function creator(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
 }

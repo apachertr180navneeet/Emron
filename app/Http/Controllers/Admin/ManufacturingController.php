@@ -13,7 +13,6 @@ use App\Models\Item;
 use App\Models\PurchaseBatch;
 use App\Models\StockLedger;
 use App\Models\PurchaseItem;
-use Exception;
 
 class ManufacturingController extends Controller
 {
@@ -50,8 +49,8 @@ class ManufacturingController extends Controller
             }
 
             return view('admin.manufacturing.index', compact('manufacturings'));
-        } catch (Exception $e) {
-            return back()->with('error', $e->getMessage());
+        } catch (\Throwable $e) {
+            return back()->with('error', 'An error occurred.');
         }
     }
 
@@ -115,7 +114,7 @@ class ManufacturingController extends Controller
                 'has_errors' => count($stockErrors) > 0,
             ]);
         } catch (Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()]);
+            return response()->json(['success' => false, 'message' => 'An error occurred.']);
         }
     }
 
@@ -244,9 +243,9 @@ class ManufacturingController extends Controller
             DB::commit();
 
             return redirect()->route('admin.manufacturing.index')->with('success', 'Manufacturing completed successfully!');
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             DB::rollBack();
-            return back()->with('error', $e->getMessage())->withInput();
+            return back()->with('error', 'An error occurred.')->withInput();
         }
     }
 
@@ -293,9 +292,9 @@ class ManufacturingController extends Controller
 
             DB::commit();
             return redirect()->route('admin.manufacturing.index')->with('success', 'Manufacturing record deleted successfully!');
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             DB::rollBack();
-            return back()->with('error', $e->getMessage());
+            return back()->with('error', 'An error occurred.');
         }
     }
 
@@ -345,7 +344,7 @@ class ManufacturingController extends Controller
                 if ($companyId) {
                     $q->where('company_id', $companyId);
                 }
-                $q->where('purchase_status', 'Approved');
+                $q->where('purchase_status', 'Completed');
             });
 
         if ($request->filled('item_id')) {

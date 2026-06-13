@@ -11,6 +11,7 @@
     <div class="p-4">
         <form action="{{ route('admin.cost-sheet.update', $costSheet->id) }}" method="POST" id="costSheetForm">
             @csrf
+            @method('PUT')
             <input type="hidden" name="items_json" id="items_json">
             <input type="hidden" name="expenses_json" id="expenses_json">
             <input type="hidden" name="status" id="status_input">

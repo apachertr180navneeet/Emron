@@ -40,8 +40,8 @@ class CompanyController extends Controller
             }
 
             return view('admin.company.index', compact('companies'));
-        } catch (Exception $e) {
-            return back()->with('error', $e->getMessage());
+        } catch (\Throwable $e) {
+            return back()->with('error', 'An error occurred');
         }
     }
 
@@ -68,7 +68,7 @@ class CompanyController extends Controller
                 return redirect()->back()->withInput()->withErrors($validator->errors());
             }
 
-            $data = $request->except('logo');
+            $data = $request->except(['logo', 'password', 'username']);
             $data['status'] = 'active';
 
             if ($request->file('logo')) {
@@ -95,7 +95,7 @@ class CompanyController extends Controller
                 'slug'       => Str::slug($request->owner_name . '-' . uniqid()),
                 'email'      => $request->email,
                 'phone'      => $request->mobile,
-                'password'   => $request->password ? Hash::make($request->password) : Hash::make('password'),
+                'password'   => Hash::make($request->password),
                 'role'       => 'user',
                 'avatar'     => $data['logo'] ?? '',
                 'address'    => $request->address ?? '',
@@ -106,8 +106,8 @@ class CompanyController extends Controller
             ]);
 
             return redirect()->route('admin.company.index')->with('success', 'Company created successfully!');
-        } catch (Exception $e) {
-            return back()->with('error', $e->getMessage());
+        } catch (\Throwable $e) {
+            return back()->with('error', 'An error occurred');
         }
     }
 
@@ -176,8 +176,8 @@ class CompanyController extends Controller
             }
 
             return redirect()->route('admin.company.index')->with('success', 'Company updated successfully!');
-        } catch (Exception $e) {
-            return back()->with('error', $e->getMessage());
+        } catch (\Throwable $e) {
+            return back()->with('error', 'An error occurred');
         }
     }
 
@@ -186,10 +186,10 @@ class CompanyController extends Controller
         try {
             $company->status = $company->status === 'active' ? 'inactive' : 'active';
             $company->save();
-            User::where('company_id', $company->id)->update(['status' => $company->status]);
+            User::where('company_id', $company->id)->where('role', 'user')->update(['status' => $company->status]);
             return response()->json(['success' => true, 'status' => $company->status]);
-        } catch (Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()]);
+        } catch (\Throwable $e) {
+            return response()->json(['success' => false, 'message' => 'An error occurred']);
         }
     }
 }

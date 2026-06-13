@@ -39,6 +39,11 @@ class ItemAssignment extends Model
 
 
 
+    public function creator(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
     public function scopeForCompany($query)
     {
         $user = Auth::user();

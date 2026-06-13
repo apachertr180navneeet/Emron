@@ -23,7 +23,7 @@
 <script>
     Toast.fire({
         icon: 'success',
-        title: "{{ !empty(Session::get('message')) ? Session::get('message') :Session::get('success') }}"
+        title: '{{ !empty(Session::get('message')) ? Session::get('message') : Session::get('success') }}'
     })
 </script>
 @endif
@@ -31,7 +31,7 @@
 <script>
     Toast.fire({
         icon: 'error',
-        title: "{{ !empty(Session::get('message')) ? Session::get('message') :Session::get('error') }}"
+        title: '{{ !empty(Session::get('message')) ? Session::get('message') : Session::get('error') }}'
     })
 </script>
 @endif
@@ -39,7 +39,7 @@
 <script>
     Toast.fire({
         icon: 'warning',
-        title: "{{ !empty(Session::get('message')) ? Session::get('message') :Session::get('warning') }}"
+        title: '{{ !empty(Session::get('message')) ? Session::get('message') : Session::get('warning') }}'
     })
 </script>
 @endif
